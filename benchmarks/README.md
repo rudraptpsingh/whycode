@@ -12,6 +12,29 @@ Instead of claiming "WhyCode helps agents," we prove it with:
 - ✅ Measurable constraint violations
 - ✅ Reproducible results anyone can verify
 
+## Benchmark Strategy
+
+We use a **two-pronged approach** for maximum impact:
+
+### Track 1: Industry-Standard Integration (SWE-bench)
+
+Integrate WhyCode with **SWE-bench**, the benchmark used by OpenAI, Anthropic, Google, and Amazon.
+
+- **What**: Add architectural constraint layer to SWE-bench issues
+- **Why**: Instant credibility, direct comparability with industry leaders
+- **Status**: 📅 Starting
+- **See**: [swe-bench-integration.md](./swe-bench-integration.md)
+
+**Example metric**: "Claude + WhyCode: 85% constraint compliance vs 45% baseline"
+
+### Track 2: Framework-Specific Benchmarks
+
+Create targeted benchmarks for popular frameworks with known patterns.
+
+- **What**: Next.js, React, Express, Prisma benchmarks
+- **Why**: Developers instantly recognize these patterns
+- **Status**: ✅ Next.js complete, React/Express in progress
+
 ## Current Benchmarks
 
 ### 1. Next.js Image Optimization Challenge
