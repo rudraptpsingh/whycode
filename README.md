@@ -16,24 +16,36 @@ WhyCode provides a structured way to record decisions, constraints, and intent a
 - **Agent-First Design**: Optimized for ingestion by AI coding assistants.
 - **Context Stashing**: Easily save and retrieve relevant snippets of information.
 
-## Value Demonstration
+## Real Agent Simulation
 
-See WhyCode in action with a realistic scenario showing concrete, measurable improvements:
+See WhyCode guiding actual AI agents making real code changes:
 
 ```bash
 npm run build
+npx tsx test/real-agent-demo.ts
+```
+
+**This creates actual code files** showing how two simulated agents modify the same code:
+- **Agent A** (no guidance): Makes 3 changes that violate critical constraints
+- **Agent B** (with WhyCode): Makes 3 DIFFERENT changes that respect constraints
+
+**Real results:**
+- Actual TypeScript files generated for comparison
+- Concrete diff showing line-by-line differences
+- Agent B prevents 3 production incidents while still improving code
+- ~$60,000+ value from incident prevention
+
+See the results: [test/REAL_AGENT_RESULTS.md](./test/REAL_AGENT_RESULTS.md)
+
+## Scenario Demo
+
+For a narrative walkthrough of the value proposition:
+
+```bash
 npx tsx demo/run-demo-scripted.ts
 ```
 
-This 30-second demo shows how WhyCode prevents production incidents and speeds up onboarding through documented decision history.
-
-**Results from the demo:**
-- 75% faster code reviews (2 hours → 30 minutes)
-- 66% faster onboarding (3 days → 1 day)
-- 100% incident prevention (3 prevented incidents)
-- 20x ROI in the first month
-
-Read the full analysis: [DEMO_RESULTS.md](./DEMO_RESULTS.md)
+Full analysis: [DEMO_RESULTS.md](./DEMO_RESULTS.md)
 
 ## Quick Start
 
