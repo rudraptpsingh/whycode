@@ -1,25 +1,78 @@
 {
   "name": "whycode",
   "version": "0.1.0",
-  "description": "Agent-readable decision memory for your codebase",
+  "description": "Agent-readable decision memory for your codebase — capture architectural constraints so AI agents never repeat past mistakes",
   "type": "module",
+  "license": "MIT",
+  "author": "WhyCode Contributors",
+  "homepage": "https://github.com/whycode-dev/whycode#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/whycode-dev/whycode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/whycode-dev/whycode/issues"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "architecture",
+    "decision",
+    "documentation",
+    "mcp",
+    "model-context-protocol",
+    "llm",
+    "claude",
+    "copilot",
+    "constraints",
+    "adr",
+    "architecture-decision-records"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "bin": {
     "whycode": "./dist/cli/index.js",
     "whycode-mcp": "./dist/mcp/server.js"
   },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./db": {
+      "import": "./dist/db/decisions.js",
+      "types": "./dist/db/decisions.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types/index.js",
+      "types": "./dist/types/index.d.ts"
+    }
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
+    "postbuild": "node --input-type=module -e \"import{chmodSync}from'fs';['dist/cli/index.js','dist/mcp/server.js'].forEach(f=>{try{chmodSync(f,0o755)}catch{}})\"",
+    "build:check": "tsc --noEmit",
+    "prepare": "npm run build",
     "dev": "tsx watch src/cli/index.ts",
     "start:mcp": "tsx src/mcp/server.ts",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "benchmark": "npx tsx benchmarks/swe-bench-eval/run-eval.ts",
+    "prepublishOnly": "npm run build && npm test",
+    "lint": "tsc --noEmit"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
     "@modelcontextprotocol/sdk": "^1.7.0",
-    "@types/better-sqlite3": "^7.6.13",
-    "@types/inquirer": "^9.0.9",
-    "@types/uuid": "^10.0.0",
     "better-sqlite3": "^12.8.0",
     "chalk": "^5.6.2",
     "chokidar": "^4.0.3",
@@ -27,12 +80,15 @@
     "inquirer": "^13.3.0",
     "ora": "^9.3.0",
     "uuid": "^13.0.0",
-    "vitest": "^4.1.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/inquirer": "^9.0.9",
     "@types/node": "^22.0.0",
+    "@types/uuid": "^10.0.0",
     "tsx": "^4.19.3",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "vitest": "^4.1.0"
   }
 }
