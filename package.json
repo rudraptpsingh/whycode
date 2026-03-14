@@ -1,0 +1,27 @@
+{
+  "name": "whycode",
+  "version": "0.1.0",
+  "description": "Agent-readable decision memory for your codebase",
+  "type": "module",
+  "bin": {
+    "whycode": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/cli.ts",
+    "start:mcp": "tsx src/mcp-server.ts",
+    "start:daemon": "tsx src/daemon.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@modelcontextprotocol/sdk": "^1.7.0",
+    "chokidar": "^4.0.3",
+    "commander": "^13.1.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.6.3"
+  }
+}
