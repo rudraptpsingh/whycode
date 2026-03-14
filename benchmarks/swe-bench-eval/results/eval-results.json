@@ -1,0 +1,680 @@
+{
+  "run_date": "2026-03-14T15:42:12.593Z",
+  "scenarios": [
+    {
+      "scenario_id": "auth",
+      "scenario_label": "Express Auth Middleware",
+      "phases": [
+        {
+          "phase": 1,
+          "phase_label": "Phase 1 — No constraints",
+          "records_loaded": 0,
+          "mutation_results": [
+            {
+              "mutation_id": "A",
+              "mutation_label": "Mutation A",
+              "phase": 1,
+              "constraints_total": 0,
+              "constraints_passed": 0,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            },
+            {
+              "mutation_id": "B",
+              "mutation_label": "Mutation B",
+              "phase": 1,
+              "constraints_total": 0,
+              "constraints_passed": 0,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            },
+            {
+              "mutation_id": "C",
+              "mutation_label": "Mutation C",
+              "phase": 1,
+              "constraints_total": 0,
+              "constraints_passed": 0,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            },
+            {
+              "mutation_id": "D",
+              "mutation_label": "Mutation D",
+              "phase": 1,
+              "constraints_total": 0,
+              "constraints_passed": 0,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            }
+          ],
+          "safe_merges": 4,
+          "total_mutations": 4,
+          "avg_compliance": 100
+        },
+        {
+          "phase": 2,
+          "phase_label": "Phase 2 — Post-incident #1",
+          "records_loaded": 1,
+          "mutation_results": [
+            {
+              "mutation_id": "A",
+              "mutation_label": "Mutation A",
+              "phase": 2,
+              "constraints_total": 1,
+              "constraints_passed": 1,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            },
+            {
+              "mutation_id": "B",
+              "mutation_label": "Mutation B",
+              "phase": 2,
+              "constraints_total": 1,
+              "constraints_passed": 0,
+              "constraints_failed": 1,
+              "violations": [
+                {
+                  "id": "auth-001",
+                  "title": "Uses jwt.verify() not jwt.decode()",
+                  "severity": "critical"
+                }
+              ],
+              "compliance_pct": 0,
+              "would_merge": false,
+              "critical_violations": 1
+            },
+            {
+              "mutation_id": "C",
+              "mutation_label": "Mutation C",
+              "phase": 2,
+              "constraints_total": 1,
+              "constraints_passed": 1,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            },
+            {
+              "mutation_id": "D",
+              "mutation_label": "Mutation D",
+              "phase": 2,
+              "constraints_total": 1,
+              "constraints_passed": 1,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            }
+          ],
+          "safe_merges": 3,
+          "total_mutations": 4,
+          "avg_compliance": 75
+        },
+        {
+          "phase": 3,
+          "phase_label": "Phase 3 — Post-audit full constraints",
+          "records_loaded": 3,
+          "mutation_results": [
+            {
+              "mutation_id": "A",
+              "mutation_label": "Mutation A",
+              "phase": 3,
+              "constraints_total": 3,
+              "constraints_passed": 2,
+              "constraints_failed": 1,
+              "violations": [
+                {
+                  "id": "auth-002",
+                  "title": "Accepts tokens only from Authorization header",
+                  "severity": "critical"
+                }
+              ],
+              "compliance_pct": 67,
+              "would_merge": false,
+              "critical_violations": 1
+            },
+            {
+              "mutation_id": "B",
+              "mutation_label": "Mutation B",
+              "phase": 3,
+              "constraints_total": 3,
+              "constraints_passed": 2,
+              "constraints_failed": 1,
+              "violations": [
+                {
+                  "id": "auth-001",
+                  "title": "Uses jwt.verify() not jwt.decode()",
+                  "severity": "critical"
+                }
+              ],
+              "compliance_pct": 67,
+              "would_merge": false,
+              "critical_violations": 1
+            },
+            {
+              "mutation_id": "C",
+              "mutation_label": "Mutation C",
+              "phase": 3,
+              "constraints_total": 3,
+              "constraints_passed": 2,
+              "constraints_failed": 1,
+              "violations": [
+                {
+                  "id": "auth-003",
+                  "title": "Returns 401 on failure, never calls next() in catch",
+                  "severity": "critical"
+                }
+              ],
+              "compliance_pct": 67,
+              "would_merge": false,
+              "critical_violations": 1
+            },
+            {
+              "mutation_id": "D",
+              "mutation_label": "Mutation D",
+              "phase": 3,
+              "constraints_total": 3,
+              "constraints_passed": 3,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            }
+          ],
+          "safe_merges": 1,
+          "total_mutations": 4,
+          "avg_compliance": 75
+        }
+      ]
+    },
+    {
+      "scenario_id": "rate",
+      "scenario_label": "Redis Rate Limiter",
+      "phases": [
+        {
+          "phase": 1,
+          "phase_label": "Phase 1 — No constraints",
+          "records_loaded": 0,
+          "mutation_results": [
+            {
+              "mutation_id": "A",
+              "mutation_label": "Mutation A",
+              "phase": 1,
+              "constraints_total": 0,
+              "constraints_passed": 0,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            },
+            {
+              "mutation_id": "B",
+              "mutation_label": "Mutation B",
+              "phase": 1,
+              "constraints_total": 0,
+              "constraints_passed": 0,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            },
+            {
+              "mutation_id": "C",
+              "mutation_label": "Mutation C",
+              "phase": 1,
+              "constraints_total": 0,
+              "constraints_passed": 0,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            },
+            {
+              "mutation_id": "D",
+              "mutation_label": "Mutation D",
+              "phase": 1,
+              "constraints_total": 0,
+              "constraints_passed": 0,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            }
+          ],
+          "safe_merges": 4,
+          "total_mutations": 4,
+          "avg_compliance": 100
+        },
+        {
+          "phase": 2,
+          "phase_label": "Phase 2 — Post-incident #1",
+          "records_loaded": 1,
+          "mutation_results": [
+            {
+              "mutation_id": "A",
+              "mutation_label": "Mutation A",
+              "phase": 2,
+              "constraints_total": 1,
+              "constraints_passed": 0,
+              "constraints_failed": 1,
+              "violations": [
+                {
+                  "id": "rate-001",
+                  "title": "Uses atomic redis.incr() not GET+SET",
+                  "severity": "critical"
+                }
+              ],
+              "compliance_pct": 0,
+              "would_merge": false,
+              "critical_violations": 1
+            },
+            {
+              "mutation_id": "B",
+              "mutation_label": "Mutation B",
+              "phase": 2,
+              "constraints_total": 1,
+              "constraints_passed": 1,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            },
+            {
+              "mutation_id": "C",
+              "mutation_label": "Mutation C",
+              "phase": 2,
+              "constraints_total": 1,
+              "constraints_passed": 1,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            },
+            {
+              "mutation_id": "D",
+              "mutation_label": "Mutation D",
+              "phase": 2,
+              "constraints_total": 1,
+              "constraints_passed": 1,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            }
+          ],
+          "safe_merges": 3,
+          "total_mutations": 4,
+          "avg_compliance": 75
+        },
+        {
+          "phase": 3,
+          "phase_label": "Phase 3 — Post-audit full constraints",
+          "records_loaded": 3,
+          "mutation_results": [
+            {
+              "mutation_id": "A",
+              "mutation_label": "Mutation A",
+              "phase": 3,
+              "constraints_total": 3,
+              "constraints_passed": 0,
+              "constraints_failed": 3,
+              "violations": [
+                {
+                  "id": "rate-001",
+                  "title": "Uses atomic redis.incr() not GET+SET",
+                  "severity": "critical"
+                },
+                {
+                  "id": "rate-002",
+                  "title": "Returns 503 on Redis failure (fail-closed)",
+                  "severity": "critical"
+                },
+                {
+                  "id": "rate-003",
+                  "title": "Sets TTL on key when current === 1",
+                  "severity": "high"
+                }
+              ],
+              "compliance_pct": 0,
+              "would_merge": false,
+              "critical_violations": 2
+            },
+            {
+              "mutation_id": "B",
+              "mutation_label": "Mutation B",
+              "phase": 3,
+              "constraints_total": 3,
+              "constraints_passed": 1,
+              "constraints_failed": 2,
+              "violations": [
+                {
+                  "id": "rate-002",
+                  "title": "Returns 503 on Redis failure (fail-closed)",
+                  "severity": "critical"
+                },
+                {
+                  "id": "rate-003",
+                  "title": "Sets TTL on key when current === 1",
+                  "severity": "high"
+                }
+              ],
+              "compliance_pct": 33,
+              "would_merge": false,
+              "critical_violations": 1
+            },
+            {
+              "mutation_id": "C",
+              "mutation_label": "Mutation C",
+              "phase": 3,
+              "constraints_total": 3,
+              "constraints_passed": 2,
+              "constraints_failed": 1,
+              "violations": [
+                {
+                  "id": "rate-002",
+                  "title": "Returns 503 on Redis failure (fail-closed)",
+                  "severity": "critical"
+                }
+              ],
+              "compliance_pct": 67,
+              "would_merge": false,
+              "critical_violations": 1
+            },
+            {
+              "mutation_id": "D",
+              "mutation_label": "Mutation D",
+              "phase": 3,
+              "constraints_total": 3,
+              "constraints_passed": 3,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            }
+          ],
+          "safe_merges": 1,
+          "total_mutations": 4,
+          "avg_compliance": 50
+        }
+      ]
+    },
+    {
+      "scenario_id": "dbtx",
+      "scenario_label": "DB Order Transaction",
+      "phases": [
+        {
+          "phase": 1,
+          "phase_label": "Phase 1 — No constraints",
+          "records_loaded": 0,
+          "mutation_results": [
+            {
+              "mutation_id": "A",
+              "mutation_label": "Mutation A",
+              "phase": 1,
+              "constraints_total": 0,
+              "constraints_passed": 0,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            },
+            {
+              "mutation_id": "B",
+              "mutation_label": "Mutation B",
+              "phase": 1,
+              "constraints_total": 0,
+              "constraints_passed": 0,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            },
+            {
+              "mutation_id": "C",
+              "mutation_label": "Mutation C",
+              "phase": 1,
+              "constraints_total": 0,
+              "constraints_passed": 0,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            },
+            {
+              "mutation_id": "D",
+              "mutation_label": "Mutation D",
+              "phase": 1,
+              "constraints_total": 0,
+              "constraints_passed": 0,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            }
+          ],
+          "safe_merges": 4,
+          "total_mutations": 4,
+          "avg_compliance": 100
+        },
+        {
+          "phase": 2,
+          "phase_label": "Phase 2 — Post-incident #1",
+          "records_loaded": 1,
+          "mutation_results": [
+            {
+              "mutation_id": "A",
+              "mutation_label": "Mutation A",
+              "phase": 2,
+              "constraints_total": 1,
+              "constraints_passed": 0,
+              "constraints_failed": 1,
+              "violations": [
+                {
+                  "id": "dbtx-001",
+                  "title": "client.release() is in finally block",
+                  "severity": "critical"
+                }
+              ],
+              "compliance_pct": 0,
+              "would_merge": false,
+              "critical_violations": 1
+            },
+            {
+              "mutation_id": "B",
+              "mutation_label": "Mutation B",
+              "phase": 2,
+              "constraints_total": 1,
+              "constraints_passed": 0,
+              "constraints_failed": 1,
+              "violations": [
+                {
+                  "id": "dbtx-001",
+                  "title": "client.release() is in finally block",
+                  "severity": "critical"
+                }
+              ],
+              "compliance_pct": 0,
+              "would_merge": false,
+              "critical_violations": 1
+            },
+            {
+              "mutation_id": "C",
+              "mutation_label": "Mutation C",
+              "phase": 2,
+              "constraints_total": 1,
+              "constraints_passed": 1,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            },
+            {
+              "mutation_id": "D",
+              "mutation_label": "Mutation D",
+              "phase": 2,
+              "constraints_total": 1,
+              "constraints_passed": 1,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            }
+          ],
+          "safe_merges": 2,
+          "total_mutations": 4,
+          "avg_compliance": 50
+        },
+        {
+          "phase": 3,
+          "phase_label": "Phase 3 — Post-audit full constraints",
+          "records_loaded": 3,
+          "mutation_results": [
+            {
+              "mutation_id": "A",
+              "mutation_label": "Mutation A",
+              "phase": 3,
+              "constraints_total": 3,
+              "constraints_passed": 0,
+              "constraints_failed": 3,
+              "violations": [
+                {
+                  "id": "dbtx-001",
+                  "title": "client.release() is in finally block",
+                  "severity": "critical"
+                },
+                {
+                  "id": "dbtx-002",
+                  "title": "Atomic inventory check-and-decrement (WHERE quantity >= $N)",
+                  "severity": "critical"
+                },
+                {
+                  "id": "dbtx-003",
+                  "title": "ROLLBACK called in catch block",
+                  "severity": "critical"
+                }
+              ],
+              "compliance_pct": 0,
+              "would_merge": false,
+              "critical_violations": 3
+            },
+            {
+              "mutation_id": "B",
+              "mutation_label": "Mutation B",
+              "phase": 3,
+              "constraints_total": 3,
+              "constraints_passed": 1,
+              "constraints_failed": 2,
+              "violations": [
+                {
+                  "id": "dbtx-001",
+                  "title": "client.release() is in finally block",
+                  "severity": "critical"
+                },
+                {
+                  "id": "dbtx-002",
+                  "title": "Atomic inventory check-and-decrement (WHERE quantity >= $N)",
+                  "severity": "critical"
+                }
+              ],
+              "compliance_pct": 33,
+              "would_merge": false,
+              "critical_violations": 2
+            },
+            {
+              "mutation_id": "C",
+              "mutation_label": "Mutation C",
+              "phase": 3,
+              "constraints_total": 3,
+              "constraints_passed": 2,
+              "constraints_failed": 1,
+              "violations": [
+                {
+                  "id": "dbtx-002",
+                  "title": "Atomic inventory check-and-decrement (WHERE quantity >= $N)",
+                  "severity": "critical"
+                }
+              ],
+              "compliance_pct": 67,
+              "would_merge": false,
+              "critical_violations": 1
+            },
+            {
+              "mutation_id": "D",
+              "mutation_label": "Mutation D",
+              "phase": 3,
+              "constraints_total": 3,
+              "constraints_passed": 3,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            }
+          ],
+          "safe_merges": 1,
+          "total_mutations": 4,
+          "avg_compliance": 50
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_scenarios": 3,
+    "total_mutations_evaluated": 36,
+    "phases": [
+      {
+        "phase": 1,
+        "avg_compliance_pct": 100,
+        "wrong_mutations_passing": 9,
+        "wrong_mutations_blocked": 0,
+        "block_rate_pct": 0
+      },
+      {
+        "phase": 2,
+        "avg_compliance_pct": 67,
+        "wrong_mutations_passing": 5,
+        "wrong_mutations_blocked": 4,
+        "block_rate_pct": 44
+      },
+      {
+        "phase": 3,
+        "avg_compliance_pct": 58,
+        "wrong_mutations_passing": 0,
+        "wrong_mutations_blocked": 9,
+        "block_rate_pct": 100
+      }
+    ]
+  }
+}
