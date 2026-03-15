@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk"
 import { v4 as uuidv4 } from "uuid"
-import type { WhyCodeRecord } from "../types/index.js"
+import type { WhyCodeRecord, ConversationSource } from "../types/index.js"
 
 const client = new Anthropic()
 
@@ -107,4 +107,122 @@ export async function expandWithAI(roughNote: string, author: string): Promise<W
     doNotChange: parsed.doNotChange ?? [],
     reviewTriggers: parsed.reviewTriggers ?? [],
   }
+}
+
+export interface ConversationMessage {
+  role: "user" | "assistant"
+  content: string
+}
+
+export interface ExtractedDecision {
+  record: Omit<WhyCodeRecord, "id" | "version" | "author" | "timestamp" | "status">
+  confidence: number
+  extractionReason: string
+}
+
+const CONVERSATION_EXTRACT_SYSTEM = `You are an expert at identifying architectural decisions and constraints from conversations between users and AI agents.
+
+Analyze the conversation and extract ALL distinct decisions, constraints, or architectural choices that were expressed or agreed upon.
+
+A decision worth capturing is one where:
+- A user states a requirement, constraint, or preference about how code should work
+- An AI agent agrees to or implements a particular approach
+- There is an explicit or implicit "we will do X" or "we must not do Y" conclusion
+- A trade-off is made consciously
+
+Return a JSON array of decisions. For each, use this structure:
+{
+  "extractionReason": "why this was captured (quote the relevant part of the conversation)",
+  "confidence": 0.0-1.0,
+  "record": {
+    "title": "short decision title",
+    "summary": "one-liner",
+    "context": "why this came up",
+    "decision": "what was decided",
+    "rationale": "reasoning provided",
+    "constraints": [{"description":"...", "severity":"must|should|avoid", "rationale":"..."}],
+    "alternatives": [],
+    "consequences": "",
+    "tags": [],
+    "decisionType": "architectural|algorithmic|security|performance|compatibility|compliance|business-logic|workaround|deferred",
+    "confidence": "definitive|provisional|exploratory",
+    "anchors": [],
+    "agentHints": [],
+    "doNotChange": [],
+    "reviewTriggers": []
+  }
+}
+
+Return ONLY valid JSON array. No markdown, no preamble. Return [] if no decisions found.`
+
+export async function extractDecisionsFromConversation(
+  messages: ConversationMessage[],
+  source: ConversationSource,
+  author: string
+): Promise<WhyCodeRecord[]> {
+  const conversationText = messages
+    .map((m) => `${m.role === "user" ? "User" : "Agent"}: ${m.content}`)
+    .join("\n\n")
+
+  const attempt = async (userMsg: string): Promise<string> => {
+    const response = await client.messages.create({
+      model: "claude-sonnet-4-5",
+      max_tokens: 4096,
+      system: CONVERSATION_EXTRACT_SYSTEM,
+      messages: [{ role: "user", content: userMsg }],
+    })
+    const block = response.content[0]
+    if (block.type !== "text") throw new Error("Unexpected response type")
+    return block.text
+  }
+
+  let raw = await attempt(
+    `Extract all architectural decisions from this conversation:\n\n${conversationText}`
+  )
+
+  let parsed: ExtractedDecision[]
+  try {
+    const match = raw.match(/\[[\s\S]*\]/)
+    if (!match) return []
+    parsed = JSON.parse(match[0]) as ExtractedDecision[]
+  } catch {
+    raw = await attempt(
+      `The previous response was not valid JSON array. Return ONLY a JSON array.\n\nConversation:\n${conversationText}`
+    )
+    const match = raw.match(/\[[\s\S]*\]/)
+    if (!match) return []
+    try {
+      parsed = JSON.parse(match[0]) as ExtractedDecision[]
+    } catch {
+      return []
+    }
+  }
+
+  if (!Array.isArray(parsed)) return []
+
+  return parsed
+    .filter((item) => item.record?.title && item.record?.summary && item.record?.decision && item.record?.context)
+    .map((item) => ({
+      id: uuidv4(),
+      version: 1,
+      status: "active" as const,
+      anchors: item.record.anchors ?? [],
+      title: item.record.title,
+      summary: item.record.summary,
+      context: item.record.context,
+      decision: item.record.decision,
+      rationale: item.record.rationale ?? "",
+      constraints: item.record.constraints ?? [],
+      alternatives: item.record.alternatives ?? [],
+      consequences: item.record.consequences ?? "",
+      tags: item.record.tags ?? [],
+      decisionType: item.record.decisionType ?? "architectural",
+      confidence: item.record.confidence ?? "provisional",
+      author,
+      timestamp: new Date().toISOString(),
+      agentHints: item.record.agentHints ?? [],
+      doNotChange: item.record.doNotChange ?? [],
+      reviewTriggers: item.record.reviewTriggers ?? [],
+      source,
+    }))
 }

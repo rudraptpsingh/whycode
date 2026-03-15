@@ -1,5 +1,5 @@
 import Database from "better-sqlite3"
-import type { WhyCodeRecord, DecisionStatus } from "../types/index.js"
+import type { WhyCodeRecord, DecisionStatus, SimilarDecision, DuplicateCheckResult } from "../types/index.js"
 
 interface RawRow {
   id: string
@@ -26,6 +26,7 @@ interface RawRow {
   agent_hints_json: string
   do_not_change_json: string
   review_triggers_json: string
+  source_json: string | null
 }
 
 function rowToRecord(row: RawRow): WhyCodeRecord {
@@ -54,6 +55,7 @@ function rowToRecord(row: RawRow): WhyCodeRecord {
     agentHints: JSON.parse(row.agent_hints_json),
     doNotChange: JSON.parse(row.do_not_change_json),
     reviewTriggers: JSON.parse(row.review_triggers_json),
+    source: row.source_json ? JSON.parse(row.source_json) : undefined,
   }
 }
 
@@ -82,12 +84,12 @@ export function insertDecision(db: Database.Database, record: WhyCodeRecord): vo
       id, version, status, anchors_json, title, summary, context, decision, rationale,
       constraints_json, alternatives_json, consequences, tags_json, decision_type,
       confidence, author, timestamp, linked_pr, linked_issue, supersedes_json,
-      superseded_by, agent_hints_json, do_not_change_json, review_triggers_json
+      superseded_by, agent_hints_json, do_not_change_json, review_triggers_json, source_json
     ) VALUES (
       @id, @version, @status, @anchors_json, @title, @summary, @context, @decision, @rationale,
       @constraints_json, @alternatives_json, @consequences, @tags_json, @decision_type,
       @confidence, @author, @timestamp, @linked_pr, @linked_issue, @supersedes_json,
-      @superseded_by, @agent_hints_json, @do_not_change_json, @review_triggers_json
+      @superseded_by, @agent_hints_json, @do_not_change_json, @review_triggers_json, @source_json
     )
   `).run({
     id: record.id,
@@ -114,6 +116,7 @@ export function insertDecision(db: Database.Database, record: WhyCodeRecord): vo
     agent_hints_json: JSON.stringify(record.agentHints),
     do_not_change_json: JSON.stringify(record.doNotChange),
     review_triggers_json: JSON.stringify(record.reviewTriggers),
+    source_json: record.source ? JSON.stringify(record.source) : null,
   })
 
   insertFts(db, record)
@@ -179,7 +182,8 @@ export function updateDecision(
       author = @author, timestamp = @timestamp, linked_pr = @linked_pr,
       linked_issue = @linked_issue, supersedes_json = @supersedes_json,
       superseded_by = @superseded_by, agent_hints_json = @agent_hints_json,
-      do_not_change_json = @do_not_change_json, review_triggers_json = @review_triggers_json
+      do_not_change_json = @do_not_change_json, review_triggers_json = @review_triggers_json,
+      source_json = @source_json
     WHERE id = @id
   `).run({
     id: merged.id, version: merged.version, status: merged.status,
@@ -195,6 +199,7 @@ export function updateDecision(
     agent_hints_json: JSON.stringify(merged.agentHints),
     do_not_change_json: JSON.stringify(merged.doNotChange),
     review_triggers_json: JSON.stringify(merged.reviewTriggers),
+    source_json: merged.source ? JSON.stringify(merged.source) : null,
   })
 
   deleteFts(db, id)
@@ -207,4 +212,188 @@ export function deleteDecision(db: Database.Database, id: string): boolean {
   deleteFts(db, id)
   const result = db.prepare("DELETE FROM decisions WHERE id = ?").run(id)
   return result.changes > 0
+}
+
+function tokenize(text: string): Set<string> {
+  return new Set(
+    text
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, " ")
+      .split(/\s+/)
+      .filter((t) => t.length > 2)
+  )
+}
+
+function jaccardSimilarity(a: Set<string>, b: Set<string>): number {
+  if (a.size === 0 && b.size === 0) return 1
+  const intersection = new Set([...a].filter((x) => b.has(x)))
+  const union = new Set([...a, ...b])
+  return intersection.size / union.size
+}
+
+export function computeSimilarityScore(
+  candidate: WhyCodeRecord,
+  incoming: { title: string; summary: string; decision: string; tags?: string[] }
+): { score: number; matchReasons: string[] } {
+  const matchReasons: string[] = []
+  let score = 0
+
+  const titleSim = jaccardSimilarity(tokenize(candidate.title), tokenize(incoming.title))
+  if (titleSim > 0.5) {
+    matchReasons.push(`Similar title (${Math.round(titleSim * 100)}% token overlap)`)
+    score += titleSim * 0.4
+  }
+
+  const summarySim = jaccardSimilarity(tokenize(candidate.summary), tokenize(incoming.summary))
+  if (summarySim > 0.3) {
+    matchReasons.push(`Similar summary (${Math.round(summarySim * 100)}% token overlap)`)
+    score += summarySim * 0.3
+  }
+
+  const decisionSim = jaccardSimilarity(tokenize(candidate.decision), tokenize(incoming.decision))
+  if (decisionSim > 0.3) {
+    matchReasons.push(`Similar decision text (${Math.round(decisionSim * 100)}% token overlap)`)
+    score += decisionSim * 0.2
+  }
+
+  if (incoming.tags && incoming.tags.length > 0 && candidate.tags.length > 0) {
+    const sharedTags = candidate.tags.filter((t) => incoming.tags!.includes(t))
+    if (sharedTags.length > 0) {
+      matchReasons.push(`Shared tags: ${sharedTags.join(", ")}`)
+      score += 0.1 * (sharedTags.length / Math.max(candidate.tags.length, incoming.tags.length))
+    }
+  }
+
+  return { score, matchReasons }
+}
+
+export function findSimilarDecisions(
+  db: Database.Database,
+  incoming: { title: string; summary: string; decision: string; tags?: string[] },
+  threshold = 0.35
+): SimilarDecision[] {
+  const all = getAllDecisions(db, "active")
+  const results: SimilarDecision[] = []
+
+  for (const record of all) {
+    const { score, matchReasons } = computeSimilarityScore(record, incoming)
+    if (score >= threshold) {
+      results.push({ record, score, matchReasons })
+    }
+  }
+
+  return results.sort((a, b) => b.score - a.score).slice(0, 5)
+}
+
+export function checkForDuplicates(
+  db: Database.Database,
+  incoming: { title: string; summary: string; decision: string; tags?: string[] }
+): DuplicateCheckResult {
+  const similar = findSimilarDecisions(db, incoming, 0.35)
+
+  if (similar.length === 0) {
+    return { hasDuplicates: false, similar: [], recommendation: "insert" }
+  }
+
+  const top = similar[0]
+
+  if (top.score >= 0.75) {
+    return {
+      hasDuplicates: true,
+      similar,
+      recommendation: "skip",
+      recommendedTargetId: top.record.id,
+    }
+  }
+
+  if (top.score >= 0.55) {
+    return {
+      hasDuplicates: true,
+      similar,
+      recommendation: "merge",
+      recommendedTargetId: top.record.id,
+    }
+  }
+
+  return {
+    hasDuplicates: true,
+    similar,
+    recommendation: "update",
+    recommendedTargetId: top.record.id,
+  }
+}
+
+export function mergeDecisions(
+  db: Database.Database,
+  targetId: string,
+  incomingData: Partial<WhyCodeRecord> & { mergedFromId?: string }
+): WhyCodeRecord | null {
+  const target = getDecisionById(db, targetId)
+  if (!target) return null
+
+  const mergedFromId = incomingData.mergedFromId
+
+  const merged: Partial<WhyCodeRecord> = {
+    constraints: mergeUnique(
+      target.constraints,
+      incomingData.constraints ?? [],
+      (a, b) => a.description.toLowerCase() === b.description.toLowerCase()
+    ),
+    agentHints: mergeUnique(
+      target.agentHints,
+      incomingData.agentHints ?? [],
+      (a, b) => a.instruction.toLowerCase() === b.instruction.toLowerCase()
+    ),
+    alternatives: mergeUnique(
+      target.alternatives,
+      incomingData.alternatives ?? [],
+      (a, b) => a.description.toLowerCase() === b.description.toLowerCase()
+    ),
+    tags: [...new Set([...target.tags, ...(incomingData.tags ?? [])])],
+    doNotChange: [...new Set([...target.doNotChange, ...(incomingData.doNotChange ?? [])])],
+    reviewTriggers: [...new Set([...target.reviewTriggers, ...(incomingData.reviewTriggers ?? [])])],
+    anchors: mergeUnique(
+      target.anchors,
+      incomingData.anchors ?? [],
+      (a, b) => a.path === b.path && a.type === b.type && a.identifier === b.identifier
+    ),
+    supersedes: [
+      ...new Set([
+        ...(target.supersedes ?? []),
+        ...(incomingData.supersedes ?? []),
+        ...(mergedFromId ? [mergedFromId] : []),
+      ]),
+    ],
+  }
+
+  if (
+    incomingData.rationale &&
+    incomingData.rationale.length > (target.rationale?.length ?? 0)
+  ) {
+    merged.rationale = incomingData.rationale
+  }
+
+  if (incomingData.consequences && !target.consequences) {
+    merged.consequences = incomingData.consequences
+  }
+
+  const confidenceOrder: Record<string, number> = { definitive: 2, provisional: 1, exploratory: 0 }
+  if (
+    incomingData.confidence &&
+    (confidenceOrder[incomingData.confidence] ?? 0) > (confidenceOrder[target.confidence] ?? 0)
+  ) {
+    merged.confidence = incomingData.confidence
+  }
+
+  return updateDecision(db, targetId, merged)
+}
+
+function mergeUnique<T>(existing: T[], incoming: T[], isSame: (a: T, b: T) => boolean): T[] {
+  const result = [...existing]
+  for (const item of incoming) {
+    if (!result.some((e) => isSame(e, item))) {
+      result.push(item)
+    }
+  }
+  return result
 }

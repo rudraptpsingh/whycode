@@ -47,7 +47,8 @@ export function initDb(whycodeDir: string): Database.Database {
       superseded_by TEXT,
       agent_hints_json TEXT NOT NULL DEFAULT '[]',
       do_not_change_json TEXT NOT NULL DEFAULT '[]',
-      review_triggers_json TEXT NOT NULL DEFAULT '[]'
+      review_triggers_json TEXT NOT NULL DEFAULT '[]',
+      source_json TEXT
     );
 
     CREATE VIRTUAL TABLE IF NOT EXISTS decisions_fts USING fts5(

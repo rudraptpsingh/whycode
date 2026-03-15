@@ -36,6 +36,15 @@ export interface AgentHint {
   scope: "file" | "function" | "pattern"
 }
 
+export type ConversationOrigin = "user-chat" | "agent-decision" | "pr-discussion" | "incident" | "code-review" | "manual"
+
+export interface ConversationSource {
+  origin: ConversationOrigin
+  conversationId?: string
+  participants?: string[]
+  excerpt?: string
+}
+
 export interface WhyCodeRecord {
   id: string
   version: number
@@ -61,6 +70,20 @@ export interface WhyCodeRecord {
   agentHints: AgentHint[]
   doNotChange: string[]
   reviewTriggers: string[]
+  source?: ConversationSource
+}
+
+export interface SimilarDecision {
+  record: WhyCodeRecord
+  score: number
+  matchReasons: string[]
+}
+
+export interface DuplicateCheckResult {
+  hasDuplicates: boolean
+  similar: SimilarDecision[]
+  recommendation: "insert" | "merge" | "update" | "skip"
+  recommendedTargetId?: string
 }
 
 export interface WhyCodeConfig {

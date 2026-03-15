@@ -14,6 +14,9 @@ import { searchTool, handleSearch } from "./tools/search.js"
 import { recordTool, handleRecord } from "./tools/record.js"
 import { checkChangeTool, handleCheckChange } from "./tools/checkChange.js"
 import { metricsTool, handleGetMetrics } from "./tools/metrics.js"
+import { findSimilarTool, handleFindSimilar } from "./tools/findSimilar.js"
+import { captureConversationTool, handleCaptureConversation } from "./tools/captureConversation.js"
+import { mergeTool, handleMerge } from "./tools/merge.js"
 
 const require = createRequire(import.meta.url)
 const pkg = require("../../package.json") as { version: string }
@@ -27,7 +30,17 @@ const whycodeDir = getWhycodeDir()
 const db = getDb(whycodeDir)
 
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
-  tools: [getByPathTool, getBySymbolTool, searchTool, recordTool, checkChangeTool, metricsTool],
+  tools: [
+    getByPathTool,
+    getBySymbolTool,
+    searchTool,
+    recordTool,
+    checkChangeTool,
+    metricsTool,
+    findSimilarTool,
+    captureConversationTool,
+    mergeTool,
+  ],
 }))
 
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
@@ -55,6 +68,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         break
       case "whycode_get_metrics":
         result = handleGetMetrics(db)
+        break
+      case "whycode_find_similar":
+        result = handleFindSimilar(db, input as Parameters<typeof handleFindSimilar>[1])
+        break
+      case "whycode_capture_conversation":
+        result = await handleCaptureConversation(db, input as Parameters<typeof handleCaptureConversation>[1])
+        break
+      case "whycode_merge":
+        result = handleMerge(db, input as Parameters<typeof handleMerge>[1])
         break
       default:
         return {
