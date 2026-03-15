@@ -1,6 +1,8 @@
 /**
  * WhyCode records for all three benchmark scenarios.
  * Each scenario has constraints that are added incrementally across phases.
+ * Records include source/origin metadata tracking how each decision was captured
+ * (incident report, security audit, code review, user chat, agent decision).
  */
 
 import { v4 as uuidv4 } from "uuid";
@@ -40,6 +42,12 @@ export const AUTH_RECORDS: WhyCodeRecord[] = [
     doNotChange: ["jwt.verify"],
     reviewTriggers: ["jwt.decode", "token validation", "auth"],
     supersedes: [],
+    source: {
+      origin: "incident",
+      conversationId: "SEC-INCIDENT-2023-08-14",
+      participants: ["Security Team", "Backend Team", "CTO"],
+      excerpt: "Post-mortem: jwt.decode() was used instead of jwt.verify() in requireAuth middleware. Attacker forged admin token. 12,000 accounts exposed.",
+    },
   },
   {
     id: uuidv4(),
@@ -74,6 +82,12 @@ export const AUTH_RECORDS: WhyCodeRecord[] = [
     doNotChange: ["token source"],
     reviewTriggers: ["req.query", "req.body", "query.token", "query param"],
     supersedes: [],
+    source: {
+      origin: "pr-discussion",
+      conversationId: "AUDIT-2024-Q1-FINDING-3",
+      participants: ["Security Team", "Lead Engineer"],
+      excerpt: "Audit finding: tokens accepted via query params leak into nginx/CDN access logs. Must only use Authorization header.",
+    },
   },
   {
     id: uuidv4(),
@@ -107,6 +121,12 @@ export const AUTH_RECORDS: WhyCodeRecord[] = [
     doNotChange: ["401 response on failure"],
     reviewTriggers: ["next()", "catch", "err", "error handling"],
     supersedes: [],
+    source: {
+      origin: "code-review",
+      conversationId: "AUDIT-2024-Q1-FINDING-7",
+      participants: ["Security Team", "Engineering Manager"],
+      excerpt: "Code review: developer added next() in catch block for logging. Routes were publicly accessible for 11 days.",
+    },
   },
 ];
 
@@ -144,6 +164,12 @@ export const RATE_LIMITER_RECORDS: WhyCodeRecord[] = [
     doNotChange: ["redis.incr"],
     reviewTriggers: ["redis.get", "redis.set", "GET", "SET", "increment"],
     supersedes: [],
+    source: {
+      origin: "incident",
+      conversationId: "INCIDENT-RATELIMIT-RACE-2023",
+      participants: ["Infrastructure Team", "SRE", "Backend Lead"],
+      excerpt: "DDoS post-mortem: 400 concurrent requests all read count=99 (GET), all passed check, all SET to 100. Effective rate limit became 40,000 req/s. Service went down.",
+    },
   },
   {
     id: uuidv4(),
@@ -177,6 +203,12 @@ export const RATE_LIMITER_RECORDS: WhyCodeRecord[] = [
     doNotChange: ["503 on Redis failure"],
     reviewTriggers: ["catch", "err", "next()", "Redis error", "fallback"],
     supersedes: [],
+    source: {
+      origin: "incident",
+      conversationId: "POSTMORTEM-REDIS-OUTAGE-2024",
+      participants: ["Infrastructure Team", "CTO", "SRE Lead"],
+      excerpt: "Post-mortem: catch block called next() during Redis outage for 'availability'. Concurrent DDoS attack went through unprotected. $80k compute cost. Fail-open is never the answer for security controls.",
+    },
   },
   {
     id: uuidv4(),
@@ -209,6 +241,12 @@ export const RATE_LIMITER_RECORDS: WhyCodeRecord[] = [
     doNotChange: ["redis.expire"],
     reviewTriggers: ["expire", "TTL", "current === 1"],
     supersedes: [],
+    source: {
+      origin: "user-chat",
+      conversationId: "POSTMORTEM-REDIS-OUTAGE-2024",
+      participants: ["Backend Lead", "Infrastructure Team"],
+      excerpt: "User (Backend Lead): the TTL call was dropped in refactor, user was locked out 3 weeks. We MUST set redis.expire when current===1, this is not optional.",
+    },
   },
 ];
 
@@ -247,6 +285,12 @@ export const DB_TRANSACTION_RECORDS: WhyCodeRecord[] = [
     doNotChange: ["finally { client.release() }"],
     reviewTriggers: ["release", "client.release", "finally"],
     supersedes: [],
+    source: {
+      origin: "incident",
+      conversationId: "INCIDENT-POOL-EXHAUSTION-2023",
+      participants: ["Backend Team", "SRE", "Engineering Manager"],
+      excerpt: "Post-mortem: client.release() was in try block. On DB error, catch ran ROLLBACK but release() was never called. 200 connections accumulated, full service outage 18 minutes.",
+    },
   },
   {
     id: uuidv4(),
@@ -282,6 +326,12 @@ export const DB_TRANSACTION_RECORDS: WhyCodeRecord[] = [
     doNotChange: ["WHERE quantity >= $1", "rowCount check"],
     reviewTriggers: ["inventory", "quantity", "UPDATE inventory", "stock"],
     supersedes: [],
+    source: {
+      origin: "incident",
+      conversationId: "INCIDENT-OVERSELL-2024",
+      participants: ["Backend Team", "Product Manager", "CTO"],
+      excerpt: "Flash sale post-mortem: concurrent SELECT+UPDATE allowed 300 orders for 50 items. $40k refunds. Must use atomic WHERE quantity >= $N check in UPDATE.",
+    },
   },
   {
     id: uuidv4(),
@@ -316,5 +366,11 @@ export const DB_TRANSACTION_RECORDS: WhyCodeRecord[] = [
     doNotChange: ["ROLLBACK in catch"],
     reviewTriggers: ["ROLLBACK", "catch", "error handling", "transaction"],
     supersedes: [],
+    source: {
+      origin: "code-review",
+      conversationId: "INCIDENT-POOL-EXHAUSTION-2023",
+      participants: ["Backend Team", "Senior Engineer"],
+      excerpt: "Code review follow-up: ROLLBACK missing from catch block. Partial transaction committed on connection release. Order records without inventory decrements.",
+    },
   },
 ];

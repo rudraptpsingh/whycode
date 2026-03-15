@@ -1,5 +1,5 @@
 {
-  "run_date": "2026-03-14T15:42:12.593Z",
+  "run_date": "2026-03-15T05:44:29.884Z",
   "scenarios": [
     {
       "scenario_id": "auth",
@@ -7,12 +7,12 @@
       "phases": [
         {
           "phase": 1,
-          "phase_label": "Phase 1 — No constraints",
+          "phase_label": "Phase 1 — No constraints (baseline)",
           "records_loaded": 0,
           "mutation_results": [
             {
               "mutation_id": "A",
-              "mutation_label": "Mutation A",
+              "mutation_label": "Mutation A — accepts req.query token",
               "phase": 1,
               "constraints_total": 0,
               "constraints_passed": 0,
@@ -24,7 +24,7 @@
             },
             {
               "mutation_id": "B",
-              "mutation_label": "Mutation B",
+              "mutation_label": "Mutation B — uses jwt.decode()",
               "phase": 1,
               "constraints_total": 0,
               "constraints_passed": 0,
@@ -36,7 +36,7 @@
             },
             {
               "mutation_id": "C",
-              "mutation_label": "Mutation C",
+              "mutation_label": "Mutation C — calls next() on failure",
               "phase": 1,
               "constraints_total": 0,
               "constraints_passed": 0,
@@ -48,7 +48,7 @@
             },
             {
               "mutation_id": "D",
-              "mutation_label": "Mutation D",
+              "mutation_label": "Mutation D — correct implementation",
               "phase": 1,
               "constraints_total": 0,
               "constraints_passed": 0,
@@ -70,7 +70,7 @@
           "mutation_results": [
             {
               "mutation_id": "A",
-              "mutation_label": "Mutation A",
+              "mutation_label": "Mutation A — accepts req.query token",
               "phase": 2,
               "constraints_total": 1,
               "constraints_passed": 1,
@@ -82,7 +82,7 @@
             },
             {
               "mutation_id": "B",
-              "mutation_label": "Mutation B",
+              "mutation_label": "Mutation B — uses jwt.decode()",
               "phase": 2,
               "constraints_total": 1,
               "constraints_passed": 0,
@@ -100,7 +100,7 @@
             },
             {
               "mutation_id": "C",
-              "mutation_label": "Mutation C",
+              "mutation_label": "Mutation C — calls next() on failure",
               "phase": 2,
               "constraints_total": 1,
               "constraints_passed": 1,
@@ -112,7 +112,7 @@
             },
             {
               "mutation_id": "D",
-              "mutation_label": "Mutation D",
+              "mutation_label": "Mutation D — correct implementation",
               "phase": 2,
               "constraints_total": 1,
               "constraints_passed": 1,
@@ -134,7 +134,7 @@
           "mutation_results": [
             {
               "mutation_id": "A",
-              "mutation_label": "Mutation A",
+              "mutation_label": "Mutation A — accepts req.query token",
               "phase": 3,
               "constraints_total": 3,
               "constraints_passed": 2,
@@ -152,7 +152,7 @@
             },
             {
               "mutation_id": "B",
-              "mutation_label": "Mutation B",
+              "mutation_label": "Mutation B — uses jwt.decode()",
               "phase": 3,
               "constraints_total": 3,
               "constraints_passed": 2,
@@ -170,7 +170,7 @@
             },
             {
               "mutation_id": "C",
-              "mutation_label": "Mutation C",
+              "mutation_label": "Mutation C — calls next() on failure",
               "phase": 3,
               "constraints_total": 3,
               "constraints_passed": 2,
@@ -188,7 +188,7 @@
             },
             {
               "mutation_id": "D",
-              "mutation_label": "Mutation D",
+              "mutation_label": "Mutation D — correct implementation",
               "phase": 3,
               "constraints_total": 3,
               "constraints_passed": 3,
@@ -203,7 +203,91 @@
           "total_mutations": 4,
           "avg_compliance": 75
         }
-      ]
+      ],
+      "recording": {
+        "scenario_id": "auth",
+        "records_inserted": 3,
+        "all_have_source": true,
+        "all_active": true,
+        "anchors_correct": true,
+        "source_origins": [
+          "incident",
+          "pr-discussion",
+          "code-review"
+        ],
+        "avg_constraints": 2,
+        "avg_hints": 2,
+        "passed": true
+      },
+      "dedup": {
+        "scenario_id": "auth",
+        "tests": [
+          {
+            "label": "Identical JWT constraint re-recorded by second agent",
+            "expected": "skip",
+            "got": "skip",
+            "score": 0.98,
+            "passed": true
+          },
+          {
+            "label": "Similar JWT constraint from code review — adds new agentHints",
+            "expected": "merge",
+            "got": "merge",
+            "score": 0.75,
+            "passed": true
+          },
+          {
+            "label": "Completely unrelated decision — no overlap",
+            "expected": "insert",
+            "got": "insert",
+            "score": 0,
+            "passed": true
+          }
+        ],
+        "accuracy_pct": 100
+      },
+      "improvement": {
+        "scenario_id": "auth",
+        "mutations": [
+          {
+            "mutation_id": "A",
+            "label": "Mutation A — accepts req.query token",
+            "without_whycode_passes": true,
+            "with_whycode_passes": false,
+            "whycode_caught_bug": true,
+            "is_correct": false
+          },
+          {
+            "mutation_id": "B",
+            "label": "Mutation B — uses jwt.decode()",
+            "without_whycode_passes": true,
+            "with_whycode_passes": false,
+            "whycode_caught_bug": true,
+            "is_correct": false
+          },
+          {
+            "mutation_id": "C",
+            "label": "Mutation C — calls next() on failure",
+            "without_whycode_passes": true,
+            "with_whycode_passes": false,
+            "whycode_caught_bug": true,
+            "is_correct": false
+          },
+          {
+            "mutation_id": "D",
+            "label": "Mutation D — correct implementation",
+            "without_whycode_passes": true,
+            "with_whycode_passes": true,
+            "whycode_caught_bug": false,
+            "is_correct": true
+          }
+        ],
+        "bad_merges_baseline": 3,
+        "bad_merges_with_whycode": 0,
+        "bugs_caught": 3,
+        "improvement_pct": 100,
+        "false_negatives": 0
+      }
     },
     {
       "scenario_id": "rate",
@@ -211,12 +295,12 @@
       "phases": [
         {
           "phase": 1,
-          "phase_label": "Phase 1 — No constraints",
+          "phase_label": "Phase 1 — No constraints (baseline)",
           "records_loaded": 0,
           "mutation_results": [
             {
               "mutation_id": "A",
-              "mutation_label": "Mutation A",
+              "mutation_label": "Mutation A — GET+SET race condition",
               "phase": 1,
               "constraints_total": 0,
               "constraints_passed": 0,
@@ -228,7 +312,7 @@
             },
             {
               "mutation_id": "B",
-              "mutation_label": "Mutation B",
+              "mutation_label": "Mutation B — no TTL set",
               "phase": 1,
               "constraints_total": 0,
               "constraints_passed": 0,
@@ -240,7 +324,7 @@
             },
             {
               "mutation_id": "C",
-              "mutation_label": "Mutation C",
+              "mutation_label": "Mutation C — next() on Redis failure",
               "phase": 1,
               "constraints_total": 0,
               "constraints_passed": 0,
@@ -252,7 +336,7 @@
             },
             {
               "mutation_id": "D",
-              "mutation_label": "Mutation D",
+              "mutation_label": "Mutation D — correct implementation",
               "phase": 1,
               "constraints_total": 0,
               "constraints_passed": 0,
@@ -274,7 +358,7 @@
           "mutation_results": [
             {
               "mutation_id": "A",
-              "mutation_label": "Mutation A",
+              "mutation_label": "Mutation A — GET+SET race condition",
               "phase": 2,
               "constraints_total": 1,
               "constraints_passed": 0,
@@ -292,7 +376,7 @@
             },
             {
               "mutation_id": "B",
-              "mutation_label": "Mutation B",
+              "mutation_label": "Mutation B — no TTL set",
               "phase": 2,
               "constraints_total": 1,
               "constraints_passed": 1,
@@ -304,7 +388,7 @@
             },
             {
               "mutation_id": "C",
-              "mutation_label": "Mutation C",
+              "mutation_label": "Mutation C — next() on Redis failure",
               "phase": 2,
               "constraints_total": 1,
               "constraints_passed": 1,
@@ -316,7 +400,7 @@
             },
             {
               "mutation_id": "D",
-              "mutation_label": "Mutation D",
+              "mutation_label": "Mutation D — correct implementation",
               "phase": 2,
               "constraints_total": 1,
               "constraints_passed": 1,
@@ -338,7 +422,7 @@
           "mutation_results": [
             {
               "mutation_id": "A",
-              "mutation_label": "Mutation A",
+              "mutation_label": "Mutation A — GET+SET race condition",
               "phase": 3,
               "constraints_total": 3,
               "constraints_passed": 0,
@@ -366,7 +450,7 @@
             },
             {
               "mutation_id": "B",
-              "mutation_label": "Mutation B",
+              "mutation_label": "Mutation B — no TTL set",
               "phase": 3,
               "constraints_total": 3,
               "constraints_passed": 1,
@@ -389,7 +473,7 @@
             },
             {
               "mutation_id": "C",
-              "mutation_label": "Mutation C",
+              "mutation_label": "Mutation C — next() on Redis failure",
               "phase": 3,
               "constraints_total": 3,
               "constraints_passed": 2,
@@ -407,7 +491,7 @@
             },
             {
               "mutation_id": "D",
-              "mutation_label": "Mutation D",
+              "mutation_label": "Mutation D — correct implementation",
               "phase": 3,
               "constraints_total": 3,
               "constraints_passed": 3,
@@ -422,7 +506,90 @@
           "total_mutations": 4,
           "avg_compliance": 50
         }
-      ]
+      ],
+      "recording": {
+        "scenario_id": "rate",
+        "records_inserted": 3,
+        "all_have_source": true,
+        "all_active": true,
+        "anchors_correct": true,
+        "source_origins": [
+          "incident",
+          "user-chat"
+        ],
+        "avg_constraints": 1,
+        "avg_hints": 2,
+        "passed": true
+      },
+      "dedup": {
+        "scenario_id": "rate",
+        "tests": [
+          {
+            "label": "Identical atomic INCR constraint re-recorded by second team",
+            "expected": "skip",
+            "got": "skip",
+            "score": 0.98,
+            "passed": true
+          },
+          {
+            "label": "Similar fail-closed constraint captured from different incident channel",
+            "expected": "merge",
+            "got": "skip",
+            "score": 0.76,
+            "passed": true
+          },
+          {
+            "label": "Unrelated database decision",
+            "expected": "insert",
+            "got": "insert",
+            "score": 0,
+            "passed": true
+          }
+        ],
+        "accuracy_pct": 100
+      },
+      "improvement": {
+        "scenario_id": "rate",
+        "mutations": [
+          {
+            "mutation_id": "A",
+            "label": "Mutation A — GET+SET race condition",
+            "without_whycode_passes": true,
+            "with_whycode_passes": false,
+            "whycode_caught_bug": true,
+            "is_correct": false
+          },
+          {
+            "mutation_id": "B",
+            "label": "Mutation B — no TTL set",
+            "without_whycode_passes": true,
+            "with_whycode_passes": false,
+            "whycode_caught_bug": true,
+            "is_correct": false
+          },
+          {
+            "mutation_id": "C",
+            "label": "Mutation C — next() on Redis failure",
+            "without_whycode_passes": true,
+            "with_whycode_passes": false,
+            "whycode_caught_bug": true,
+            "is_correct": false
+          },
+          {
+            "mutation_id": "D",
+            "label": "Mutation D — correct implementation",
+            "without_whycode_passes": true,
+            "with_whycode_passes": true,
+            "whycode_caught_bug": false,
+            "is_correct": true
+          }
+        ],
+        "bad_merges_baseline": 3,
+        "bad_merges_with_whycode": 0,
+        "bugs_caught": 3,
+        "improvement_pct": 100,
+        "false_negatives": 0
+      }
     },
     {
       "scenario_id": "dbtx",
@@ -430,12 +597,12 @@
       "phases": [
         {
           "phase": 1,
-          "phase_label": "Phase 1 — No constraints",
+          "phase_label": "Phase 1 — No constraints (baseline)",
           "records_loaded": 0,
           "mutation_results": [
             {
               "mutation_id": "A",
-              "mutation_label": "Mutation A",
+              "mutation_label": "Mutation A — no try/catch, no release",
               "phase": 1,
               "constraints_total": 0,
               "constraints_passed": 0,
@@ -447,7 +614,7 @@
             },
             {
               "mutation_id": "B",
-              "mutation_label": "Mutation B",
+              "mutation_label": "Mutation B — release before ROLLBACK",
               "phase": 1,
               "constraints_total": 0,
               "constraints_passed": 0,
@@ -459,7 +626,7 @@
             },
             {
               "mutation_id": "C",
-              "mutation_label": "Mutation C",
+              "mutation_label": "Mutation C — no atomic inventory check",
               "phase": 1,
               "constraints_total": 0,
               "constraints_passed": 0,
@@ -471,7 +638,7 @@
             },
             {
               "mutation_id": "D",
-              "mutation_label": "Mutation D",
+              "mutation_label": "Mutation D — correct implementation",
               "phase": 1,
               "constraints_total": 0,
               "constraints_passed": 0,
@@ -493,7 +660,7 @@
           "mutation_results": [
             {
               "mutation_id": "A",
-              "mutation_label": "Mutation A",
+              "mutation_label": "Mutation A — no try/catch, no release",
               "phase": 2,
               "constraints_total": 1,
               "constraints_passed": 0,
@@ -511,7 +678,7 @@
             },
             {
               "mutation_id": "B",
-              "mutation_label": "Mutation B",
+              "mutation_label": "Mutation B — release before ROLLBACK",
               "phase": 2,
               "constraints_total": 1,
               "constraints_passed": 0,
@@ -529,7 +696,7 @@
             },
             {
               "mutation_id": "C",
-              "mutation_label": "Mutation C",
+              "mutation_label": "Mutation C — no atomic inventory check",
               "phase": 2,
               "constraints_total": 1,
               "constraints_passed": 1,
@@ -541,7 +708,7 @@
             },
             {
               "mutation_id": "D",
-              "mutation_label": "Mutation D",
+              "mutation_label": "Mutation D — correct implementation",
               "phase": 2,
               "constraints_total": 1,
               "constraints_passed": 1,
@@ -563,7 +730,7 @@
           "mutation_results": [
             {
               "mutation_id": "A",
-              "mutation_label": "Mutation A",
+              "mutation_label": "Mutation A — no try/catch, no release",
               "phase": 3,
               "constraints_total": 3,
               "constraints_passed": 0,
@@ -591,7 +758,7 @@
             },
             {
               "mutation_id": "B",
-              "mutation_label": "Mutation B",
+              "mutation_label": "Mutation B — release before ROLLBACK",
               "phase": 3,
               "constraints_total": 3,
               "constraints_passed": 1,
@@ -614,7 +781,7 @@
             },
             {
               "mutation_id": "C",
-              "mutation_label": "Mutation C",
+              "mutation_label": "Mutation C — no atomic inventory check",
               "phase": 3,
               "constraints_total": 3,
               "constraints_passed": 2,
@@ -632,7 +799,7 @@
             },
             {
               "mutation_id": "D",
-              "mutation_label": "Mutation D",
+              "mutation_label": "Mutation D — correct implementation",
               "phase": 3,
               "constraints_total": 3,
               "constraints_passed": 3,
@@ -647,34 +814,120 @@
           "total_mutations": 4,
           "avg_compliance": 50
         }
-      ]
+      ],
+      "recording": {
+        "scenario_id": "dbtx",
+        "records_inserted": 3,
+        "all_have_source": true,
+        "all_active": true,
+        "anchors_correct": true,
+        "source_origins": [
+          "incident",
+          "code-review"
+        ],
+        "avg_constraints": 2,
+        "avg_hints": 3,
+        "passed": true
+      },
+      "dedup": {
+        "scenario_id": "dbtx",
+        "tests": [
+          {
+            "label": "Identical connection release constraint re-recorded",
+            "expected": "skip",
+            "got": "skip",
+            "score": 1,
+            "passed": true
+          },
+          {
+            "label": "Similar ROLLBACK constraint from follow-up code review",
+            "expected": "merge",
+            "got": "merge",
+            "score": 0.71,
+            "passed": true
+          },
+          {
+            "label": "Unrelated frontend caching decision",
+            "expected": "insert",
+            "got": "insert",
+            "score": 0,
+            "passed": true
+          }
+        ],
+        "accuracy_pct": 100
+      },
+      "improvement": {
+        "scenario_id": "dbtx",
+        "mutations": [
+          {
+            "mutation_id": "A",
+            "label": "Mutation A — no try/catch, no release",
+            "without_whycode_passes": true,
+            "with_whycode_passes": false,
+            "whycode_caught_bug": true,
+            "is_correct": false
+          },
+          {
+            "mutation_id": "B",
+            "label": "Mutation B — release before ROLLBACK",
+            "without_whycode_passes": true,
+            "with_whycode_passes": false,
+            "whycode_caught_bug": true,
+            "is_correct": false
+          },
+          {
+            "mutation_id": "C",
+            "label": "Mutation C — no atomic inventory check",
+            "without_whycode_passes": true,
+            "with_whycode_passes": false,
+            "whycode_caught_bug": true,
+            "is_correct": false
+          },
+          {
+            "mutation_id": "D",
+            "label": "Mutation D — correct implementation",
+            "without_whycode_passes": true,
+            "with_whycode_passes": true,
+            "whycode_caught_bug": false,
+            "is_correct": true
+          }
+        ],
+        "bad_merges_baseline": 3,
+        "bad_merges_with_whycode": 0,
+        "bugs_caught": 3,
+        "improvement_pct": 100,
+        "false_negatives": 0
+      }
     }
   ],
   "summary": {
-    "total_scenarios": 3,
-    "total_mutations_evaluated": 36,
-    "phases": [
-      {
-        "phase": 1,
-        "avg_compliance_pct": 100,
-        "wrong_mutations_passing": 9,
-        "wrong_mutations_blocked": 0,
-        "block_rate_pct": 0
-      },
-      {
-        "phase": 2,
-        "avg_compliance_pct": 67,
-        "wrong_mutations_passing": 5,
-        "wrong_mutations_blocked": 4,
-        "block_rate_pct": 44
-      },
-      {
-        "phase": 3,
-        "avg_compliance_pct": 58,
-        "wrong_mutations_passing": 0,
-        "wrong_mutations_blocked": 9,
-        "block_rate_pct": 100
-      }
-    ]
+    "dim1_constraint_blocking": {
+      "phase1_block_rate_pct": 0,
+      "phase3_block_rate_pct": 100,
+      "improvement_pct": 100,
+      "false_negative_rate_pct": 0
+    },
+    "dim2_recording": {
+      "total_records": 9,
+      "source_coverage_pct": 100,
+      "origins": [
+        "incident",
+        "pr-discussion",
+        "code-review",
+        "user-chat"
+      ],
+      "scenarios_passed": 3
+    },
+    "dim3_dedup": {
+      "total_tests": 9,
+      "passed": 9,
+      "accuracy_pct": 100
+    },
+    "dim4_agent_improvement": {
+      "bad_merges_without_whycode": 9,
+      "bad_merges_with_whycode": 0,
+      "improvement_pct": 100,
+      "false_negatives": 0
+    }
   }
 }
