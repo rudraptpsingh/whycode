@@ -20,6 +20,9 @@ Thumbs.db
 .env
 .env.local
 
-# WhyCode
+# Oversight
 .oversight/
 .whycode/
+
+# Cursor (created by postinstall)
+.cursor/

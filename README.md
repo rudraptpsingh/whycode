@@ -42,11 +42,21 @@ npm install --save-dev oversight
 npm install -g oversight
 ```
 
+**Auto-setup on install**: When installed as a project dependency in a git repo, Oversight initializes automatically:
+- Creates `.oversight/` with config and database
+- Adds `.cursor/rules/oversight.mdc` so Cursor agents use Oversight tools
+- Adds `.cursor/mcp.json` so the Oversight MCP server is available
+
+If postinstall doesn't run (some npm setups), the first CLI use (`npx oversight list`, etc.) auto-initializes instead.
+
 ## Quick Start
 
 ```bash
-# Initialize in your repo
+# Initialize (interactive) — or skip; auto-init happens on first use
 npx oversight init
+
+# Non-interactive init (uses git author)
+npx oversight init --yes
 
 # Record your first decision
 npx oversight capture
@@ -127,6 +137,12 @@ oversight review            Step through decisions that may need updating
 oversight heatmap           Show which files have the most coverage
 oversight metrics           Print coverage and constraint statistics
 oversight hooks install     Add a post-commit git hook reminder
+oversight hooks install --enforce   Add pre-commit hook that blocks on constraint violations
+oversight enforce on        Enable blocking (pre-commit blocks MUST violations)
+oversight enforce off       Disable blocking (advisory mode)
+oversight enforce staged    Check staged files (exits 1 if blocked; used by pre-commit)
+oversight enforce staged --dry-run   Preview without blocking (CI)
+oversight export            Export decisions to JSON (stdout or -o file)
 oversight dashboard         Open the visual decision dashboard
 ```
 

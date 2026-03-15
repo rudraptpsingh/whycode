@@ -53,6 +53,7 @@
   },
   "files": [
     "dist/",
+    "scripts/postinstall.mjs",
     "dashboard-ui/dist/",
     "README.md",
     "LICENSE"
@@ -71,8 +72,11 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "benchmark": "npx tsx benchmarks/swe-bench-eval/run-eval.ts",
+    "validate": "node scripts/validate.mjs",
+    "postinstall": "node scripts/postinstall.mjs",
     "prepublishOnly": "npm run build:all && npm test",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "precommit": "npm run build && npm test"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
