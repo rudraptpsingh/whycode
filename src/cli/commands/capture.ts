@@ -2,12 +2,12 @@ import { Command } from "commander"
 import inquirer from "inquirer"
 import ora from "ora"
 import { v4 as uuidv4 } from "uuid"
-import { getWhycodeDir, readConfig } from "../../utils/config.js"
+import { getOversightDir, readConfig } from "../../utils/config.js"
 import { getDb } from "../../db/schema.js"
 import { insertDecision } from "../../db/decisions.js"
 import { logger } from "../../utils/logger.js"
 import { expandWithAI } from "../../ai/capture.js"
-import type { WhyCodeRecord, DecisionType, Confidence, CodeAnchor, AgentHint } from "../../types/index.js"
+import type { OversightRecord, DecisionType, Confidence, CodeAnchor, AgentHint } from "../../types/index.js"
 
 export function registerCapture(program: Command): void {
   program
@@ -15,9 +15,9 @@ export function registerCapture(program: Command): void {
     .description("Record a new code decision")
     .option("--ai", "Use AI to expand a rough note into a full record")
     .action(async (opts: { ai?: boolean }) => {
-      const whycodeDir = getWhycodeDir()
+      const oversightDir = getOversightDir()
       const config = readConfig()
-      const db = getDb(whycodeDir)
+      const db = getDb(oversightDir)
 
       if (opts.ai) {
         await captureWithAI(db, config.author)
@@ -59,7 +59,7 @@ async function captureManual(db: ReturnType<typeof getDb>, author: string): Prom
     ? [{ instruction: answers.agentHints.trim(), scope: "file" as const }]
     : []
 
-  const record: WhyCodeRecord = {
+  const record: OversightRecord = {
     id: uuidv4(), version: 1, status: "active", anchors, title: answers.title.trim(),
     summary: answers.summary.trim(), context: answers.context?.trim() ?? "",
     decision: answers.decision?.trim() ?? "", rationale: answers.rationale?.trim() ?? "",
@@ -79,7 +79,7 @@ async function captureWithAI(db: ReturnType<typeof getDb>, author: string): Prom
   ])
 
   const spinner = ora("Expanding with AI...").start()
-  let record: WhyCodeRecord
+  let record: OversightRecord
   try {
     record = await expandWithAI(roughNote.trim(), author)
     spinner.succeed("AI expanded your note into a full decision record")

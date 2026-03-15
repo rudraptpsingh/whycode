@@ -3,9 +3,9 @@ import { checkForDuplicates, findSimilarDecisions } from "../../db/decisions.js"
 import type { DuplicateCheckResult, SimilarDecision } from "../../types/index.js"
 
 export const findSimilarTool = {
-  name: "whycode_find_similar",
+  name: "oversight_find_similar",
   description:
-    "Check if a similar decision already exists before recording a new one. Returns similar decisions with match scores and a recommendation (insert/merge/update/skip). Always call this before whycode_record to avoid duplicates.",
+    "Check if a similar decision already exists before recording a new one. Returns similar decisions with match scores and a recommendation (insert/merge/update/skip). Always call this before oversight_record to avoid duplicates.",
   inputSchema: {
     type: "object" as const,
     properties: {

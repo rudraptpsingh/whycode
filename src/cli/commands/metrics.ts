@@ -1,6 +1,6 @@
 import { Command } from "commander"
 import chalk from "chalk"
-import { getWhycodeDir } from "../../utils/config.js"
+import { getOversightDir } from "../../utils/config.js"
 import { getDb } from "../../db/schema.js"
 import { computeMetrics } from "../../db/metrics.js"
 
@@ -20,8 +20,8 @@ export function registerMetrics(program: Command): void {
     .description("Show impact metrics for your decision knowledge base")
     .option("--json", "Output raw JSON")
     .action(async (opts: { json?: boolean }) => {
-      const whycodeDir = getWhycodeDir()
-      const db = getDb(whycodeDir)
+      const oversightDir = getOversightDir()
+      const db = getDb(oversightDir)
       const m = computeMetrics(db)
 
       if (opts.json) {
@@ -33,7 +33,7 @@ export function registerMetrics(program: Command): void {
       const divider = chalk.gray("─".repeat(w))
 
       console.log("")
-      console.log(chalk.bold.white("  WhyCode — Decision Memory Metrics"))
+      console.log(chalk.bold.white("  Oversight — Decision Memory Metrics"))
       console.log(divider)
 
       console.log("")
@@ -66,13 +66,13 @@ export function registerMetrics(program: Command): void {
 
       console.log(divider)
       console.log("")
-      console.log(chalk.bold("  CHANGE RISK ASSESSMENTS  ") + chalk.gray("(whycode_check_change calls)"))
+      console.log(chalk.bold("  CHANGE RISK ASSESSMENTS  ") + chalk.gray("(oversight_check_change calls)"))
       console.log("")
 
       const checks = m.checkChange.totalChecks
       if (checks === 0) {
         console.log(chalk.gray("  No change checks recorded yet."))
-        console.log(chalk.gray("  Run whycode_check_change before making significant code changes."))
+        console.log(chalk.gray("  Run oversight_check_change before making significant code changes."))
       } else {
         console.log(`  Total checks run       ${chalk.bold.white(String(checks))}`)
         console.log(`    High risk flagged    ${chalk.red.bold(String(m.checkChange.highRiskBlocked))}  ${bar(m.checkChange.highRiskBlocked, checks)}  ${pct(m.checkChange.highRiskBlocked, checks)}`)

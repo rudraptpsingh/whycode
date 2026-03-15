@@ -1,5 +1,5 @@
 import Database from "better-sqlite3"
-import type { WhyCodeRecord, SearchOptions } from "../types/index.js"
+import type { OversightRecord, SearchOptions } from "../types/index.js"
 import { getAllDecisions } from "./decisions.js"
 
 interface FtsRow {
@@ -34,11 +34,11 @@ interface RawRow {
   review_triggers_json: string
 }
 
-function rowToRecord(row: RawRow): WhyCodeRecord {
+function rowToRecord(row: RawRow): OversightRecord {
   return {
     id: row.id,
     version: row.version,
-    status: row.status as WhyCodeRecord["status"],
+    status: row.status as OversightRecord["status"],
     anchors: JSON.parse(row.anchors_json),
     title: row.title,
     summary: row.summary,
@@ -49,8 +49,8 @@ function rowToRecord(row: RawRow): WhyCodeRecord {
     alternatives: JSON.parse(row.alternatives_json),
     consequences: row.consequences,
     tags: JSON.parse(row.tags_json),
-    decisionType: row.decision_type as WhyCodeRecord["decisionType"],
-    confidence: row.confidence as WhyCodeRecord["confidence"],
+    decisionType: row.decision_type as OversightRecord["decisionType"],
+    confidence: row.confidence as OversightRecord["confidence"],
     author: row.author,
     timestamp: row.timestamp,
     linkedPR: row.linked_pr ?? undefined,
@@ -63,9 +63,9 @@ function rowToRecord(row: RawRow): WhyCodeRecord {
   }
 }
 
-export function searchDecisions(db: Database.Database, options: SearchOptions): WhyCodeRecord[] {
+export function searchDecisions(db: Database.Database, options: SearchOptions): OversightRecord[] {
   const limit = options.limit ?? 10
-  let candidates: WhyCodeRecord[]
+  let candidates: OversightRecord[]
 
   if (options.query) {
     const ftsRows = db
@@ -105,7 +105,7 @@ export function searchDecisions(db: Database.Database, options: SearchOptions): 
   }
 
   const seen = new Set<string>()
-  const deduped: WhyCodeRecord[] = []
+  const deduped: OversightRecord[] = []
   for (const r of candidates) {
     if (!seen.has(r.id)) {
       seen.add(r.id)

@@ -1,11 +1,11 @@
 import fs from "fs"
 import path from "path"
-import type { WhyCodeConfig } from "../types/index.js"
+import type { OversightConfig } from "../types/index.js"
 
-export function findWhycodeDir(startDir: string = process.cwd()): string | null {
+export function findOversightDir(startDir: string = process.cwd()): string | null {
   let current = startDir
   while (true) {
-    const candidate = path.join(current, ".whycode")
+    const candidate = path.join(current, ".oversight")
     if (fs.existsSync(path.join(candidate, "config.json"))) {
       return candidate
     }
@@ -15,29 +15,29 @@ export function findWhycodeDir(startDir: string = process.cwd()): string | null 
   }
 }
 
-export function readConfig(startDir: string = process.cwd()): WhyCodeConfig {
-  const whycodeDir = findWhycodeDir(startDir)
-  if (!whycodeDir) {
-    throw new Error("WhyCode not initialized. Run `whycode init` first.")
+export function readConfig(startDir: string = process.cwd()): OversightConfig {
+  const oversightDir = findOversightDir(startDir)
+  if (!oversightDir) {
+    throw new Error("Oversight not initialized. Run `oversight init` first.")
   }
-  const raw = fs.readFileSync(path.join(whycodeDir, "config.json"), "utf-8")
-  return JSON.parse(raw) as WhyCodeConfig
+  const raw = fs.readFileSync(path.join(oversightDir, "config.json"), "utf-8")
+  return JSON.parse(raw) as OversightConfig
 }
 
-export function writeConfig(config: WhyCodeConfig, targetDir: string = process.cwd()): void {
-  const whycodeDir = path.join(targetDir, ".whycode")
-  fs.mkdirSync(whycodeDir, { recursive: true })
-  fs.writeFileSync(path.join(whycodeDir, "config.json"), JSON.stringify(config, null, 2), "utf-8")
+export function writeConfig(config: OversightConfig, targetDir: string = process.cwd()): void {
+  const oversightDir = path.join(targetDir, ".oversight")
+  fs.mkdirSync(oversightDir, { recursive: true })
+  fs.writeFileSync(path.join(oversightDir, "config.json"), JSON.stringify(config, null, 2), "utf-8")
 }
 
-export function getWhycodeDir(startDir: string = process.cwd()): string {
-  const dir = findWhycodeDir(startDir)
+export function getOversightDir(startDir: string = process.cwd()): string {
+  const dir = findOversightDir(startDir)
   if (!dir) {
-    throw new Error("WhyCode not initialized. Run `whycode init` first.")
+    throw new Error("Oversight not initialized. Run `oversight init` first.")
   }
   return dir
 }
 
 export function getDbPath(startDir: string = process.cwd()): string {
-  return path.join(getWhycodeDir(startDir), "decisions.db")
+  return path.join(getOversightDir(startDir), "decisions.db")
 }

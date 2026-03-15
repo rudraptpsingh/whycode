@@ -16,7 +16,7 @@ export default function Sidebar({ currentPage, onNavigate }: Props) {
             <path d="M7 10h6M10 7v6" stroke="#2f81f7" strokeWidth="1.5" strokeLinecap="round"/>
           </svg>
         </div>
-        <span className={styles.logoText}>WhyCode</span>
+        <span className={styles.logoText}>Oversight</span>
       </div>
 
       <div className={styles.nav}>
@@ -36,7 +36,7 @@ export default function Sidebar({ currentPage, onNavigate }: Props) {
 
       <div className={styles.footer}>
         <a
-          href="https://github.com/whycode-dev/whycode"
+          href="https://github.com/rudraptpsingh/oversight"
           target="_blank"
           rel="noopener noreferrer"
           className={styles.footerLink}
@@ -45,7 +45,7 @@ export default function Sidebar({ currentPage, onNavigate }: Props) {
           GitHub
         </a>
         <a
-          href="https://www.npmjs.com/package/whycode"
+          href="https://www.npmjs.com/package/oversight"
           target="_blank"
           rel="noopener noreferrer"
           className={styles.footerLink}

@@ -1,9 +1,9 @@
 import Database from "better-sqlite3"
 import { mergeDecisions, getDecisionById } from "../../db/decisions.js"
-import type { WhyCodeRecord } from "../../types/index.js"
+import type { OversightRecord } from "../../types/index.js"
 
 export const mergeTool = {
-  name: "whycode_merge",
+  name: "oversight_merge",
   description:
     "Merge a source decision into a target decision. All unique constraints, agent hints, alternatives, tags, anchors, and other fields from the source are absorbed into the target. The source decision is then marked as superseded. Use this to consolidate duplicate or overlapping decisions.",
   inputSchema: {
@@ -25,7 +25,7 @@ export const mergeTool = {
 export function handleMerge(
   db: Database.Database,
   input: { targetId: string; sourceId: string }
-): { merged: WhyCodeRecord; superseded: WhyCodeRecord } | { error: string } {
+): { merged: OversightRecord; superseded: OversightRecord } | { error: string } {
   const target = getDecisionById(db, input.targetId)
   if (!target) return { error: `Target decision not found: ${input.targetId}` }
 

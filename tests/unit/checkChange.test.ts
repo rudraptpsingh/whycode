@@ -6,13 +6,13 @@ import { v4 as uuidv4 } from "uuid"
 import { initDb } from "../../src/db/schema.js"
 import { insertDecision } from "../../src/db/decisions.js"
 import { handleCheckChange } from "../../src/mcp/tools/checkChange.js"
-import type { WhyCodeRecord } from "../../src/types/index.js"
+import type { OversightRecord } from "../../src/types/index.js"
 
 function tmpDir(): string {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "whycode-checkchange-test-"))
+  return fs.mkdtempSync(path.join(os.tmpdir(), "oversight-checkchange-test-"))
 }
 
-function makeRecord(overrides: Partial<WhyCodeRecord> = {}): WhyCodeRecord {
+function makeRecord(overrides: Partial<OversightRecord> = {}): OversightRecord {
   return {
     id: uuidv4(), version: 1, status: "active",
     anchors: [{ type: "file", path: "src/auth.ts" }],

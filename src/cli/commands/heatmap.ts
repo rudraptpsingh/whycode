@@ -1,6 +1,6 @@
 import { Command } from "commander"
 import chalk from "chalk"
-import { getWhycodeDir } from "../../utils/config.js"
+import { getOversightDir } from "../../utils/config.js"
 import { getDb } from "../../db/schema.js"
 import { getAllDecisions } from "../../db/decisions.js"
 import { getFilesAboveChurnThreshold } from "../../git/diff.js"
@@ -16,8 +16,8 @@ export function registerHeatmap(program: Command): void {
     .description("Show files that need decisions based on git churn")
     .option("--json", "Output raw JSON")
     .action(async (opts: { json?: boolean }) => {
-      const whycodeDir = getWhycodeDir()
-      const db = getDb(whycodeDir)
+      const oversightDir = getOversightDir()
+      const db = getDb(oversightDir)
 
       let churnFiles: string[]
       try {

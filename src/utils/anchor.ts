@@ -1,11 +1,11 @@
 import path from "path"
-import type { WhyCodeRecord, CodeAnchor } from "../types/index.js"
+import type { OversightRecord, CodeAnchor } from "../types/index.js"
 
 function normalizePath(p: string): string {
   return p.replace(/^\.\//, "").replace(/\\/g, "/")
 }
 
-export function matchesAnchor(record: WhyCodeRecord, filePath: string): boolean {
+export function matchesAnchor(record: OversightRecord, filePath: string): boolean {
   const normalizedFile = normalizePath(path.normalize(filePath))
   return record.anchors.some((anchor) => {
     const normalizedAnchor = normalizePath(path.normalize(anchor.path))

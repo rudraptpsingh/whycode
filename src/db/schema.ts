@@ -2,9 +2,9 @@ import Database from "better-sqlite3"
 import path from "path"
 import fs from "fs"
 
-export function initDb(whycodeDir: string): Database.Database {
-  fs.mkdirSync(whycodeDir, { recursive: true })
-  const dbPath = path.join(whycodeDir, "decisions.db")
+export function initDb(oversightDir: string): Database.Database {
+  fs.mkdirSync(oversightDir, { recursive: true })
+  const dbPath = path.join(oversightDir, "decisions.db")
   const db = new Database(dbPath)
 
   db.pragma("journal_mode = WAL")
@@ -66,8 +66,8 @@ export function initDb(whycodeDir: string): Database.Database {
   return db
 }
 
-export function getDb(whycodeDir: string): Database.Database {
-  const dbPath = path.join(whycodeDir, "decisions.db")
+export function getDb(oversightDir: string): Database.Database {
+  const dbPath = path.join(oversightDir, "decisions.db")
   const db = new Database(dbPath)
   db.pragma("journal_mode = WAL")
   db.pragma("foreign_keys = ON")

@@ -2,10 +2,10 @@ import Database from "better-sqlite3"
 import { extractDecisionsFromConversation, type ConversationMessage } from "../../ai/capture.js"
 import { checkForDuplicates, insertDecision, mergeDecisions } from "../../db/decisions.js"
 import { readConfig } from "../../utils/config.js"
-import type { ConversationSource, ConversationOrigin, WhyCodeRecord } from "../../types/index.js"
+import type { ConversationSource, ConversationOrigin, OversightRecord } from "../../types/index.js"
 
 export const captureConversationTool = {
-  name: "whycode_capture_conversation",
+  name: "oversight_capture_conversation",
   description:
     "Automatically extract and record all architectural decisions from a conversation transcript. Pass the full conversation (user + agent messages) and the tool will identify decisions, check for duplicates, and record or merge them. Returns a summary of all decisions found and what action was taken for each.",
   inputSchema: {
@@ -90,7 +90,7 @@ export async function handleCaptureConversation(
     errors: [],
   }
 
-  let extracted: WhyCodeRecord[]
+  let extracted: OversightRecord[]
   try {
     extracted = await extractDecisionsFromConversation(messages, source, author)
   } catch (err) {

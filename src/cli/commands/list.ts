@@ -1,5 +1,5 @@
 import { Command } from "commander"
-import { getWhycodeDir } from "../../utils/config.js"
+import { getOversightDir } from "../../utils/config.js"
 import { getDb } from "../../db/schema.js"
 import { getAllDecisions } from "../../db/decisions.js"
 import { logger } from "../../utils/logger.js"
@@ -25,8 +25,8 @@ export function registerList(program: Command): void {
     .option("--type <type>", "Filter by decision type")
     .option("--json", "Output raw JSON")
     .action(async (opts: { status?: string; tag?: string; type?: string; json?: boolean }) => {
-      const whycodeDir = getWhycodeDir()
-      const db = getDb(whycodeDir)
+      const oversightDir = getOversightDir()
+      const db = getDb(oversightDir)
 
       let records = opts.status
         ? getAllDecisions(db, opts.status as DecisionStatus)

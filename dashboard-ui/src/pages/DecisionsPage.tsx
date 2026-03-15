@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react"
 import type { Page } from "../App"
 import { fetchDecisions, searchDecisions } from "../api"
-import type { WhyCodeRecord, DecisionStatus, DecisionType } from "../types"
+import type { OversightRecord, DecisionStatus, DecisionType } from "../types"
 import { decisionTypeBadge, statusBadge, Badge } from "../components/Badge"
 import styles from "./DecisionsPage.module.css"
 
@@ -16,7 +16,7 @@ const ALL_TYPES: DecisionType[] = [
 ]
 
 export default function DecisionsPage({ onNavigate }: Props) {
-  const [decisions, setDecisions] = useState<WhyCodeRecord[]>([])
+  const [decisions, setDecisions] = useState<OversightRecord[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState("")
@@ -27,7 +27,7 @@ export default function DecisionsPage({ onNavigate }: Props) {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      let data: WhyCodeRecord[]
+      let data: OversightRecord[]
       if (search.trim()) {
         data = await searchDecisions(search.trim(), 100)
       } else {
@@ -116,7 +116,7 @@ export default function DecisionsPage({ onNavigate }: Props) {
         <div className={styles.empty}>
           <p>No decisions found.</p>
           {!search && !statusFilter && !typeFilter && (
-            <p>Run <code>whycode capture</code> to record your first decision.</p>
+            <p>Run <code>oversight capture</code> to record your first decision.</p>
           )}
         </div>
       ) : (
@@ -138,7 +138,7 @@ function DecisionRow({
   decision: d,
   onClick,
 }: {
-  decision: WhyCodeRecord
+  decision: OversightRecord
   onClick: () => void
 }) {
   const mustCount = d.constraints.filter((c) => c.severity === "must").length

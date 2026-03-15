@@ -1,4 +1,4 @@
-import { writeConfig, findWhycodeDir } from '../dist/utils/config.js'
+import { writeConfig, findOversightDir } from '../dist/utils/config.js'
 import { initDb, getDb } from '../dist/db/schema.js'
 import { insertDecision, getDecisionsByPath, getAllDecisions } from '../dist/db/decisions.js'
 import { searchDecisions } from '../dist/db/search.js'

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import type { Page } from "../App"
 import { fetchMetrics, fetchDecisions } from "../api"
-import type { WhyCodeMetrics, WhyCodeRecord, DecisionType } from "../types"
+import type { OversightMetrics, OversightRecord, DecisionType } from "../types"
 import StatCard from "../components/StatCard"
 import { decisionTypeBadge, statusBadge } from "../components/Badge"
 import styles from "./OverviewPage.module.css"
@@ -11,8 +11,8 @@ interface Props {
 }
 
 export default function OverviewPage({ onNavigate }: Props) {
-  const [metrics, setMetrics] = useState<WhyCodeMetrics | null>(null)
-  const [recent, setRecent] = useState<WhyCodeRecord[]>([])
+  const [metrics, setMetrics] = useState<OversightMetrics | null>(null)
+  const [recent, setRecent] = useState<OversightRecord[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -154,7 +154,7 @@ export default function OverviewPage({ onNavigate }: Props) {
           </button>
         </div>
         {recent.length === 0 ? (
-          <p className={styles.empty}>No decisions recorded yet. Run <code>whycode capture</code> to add your first.</p>
+          <p className={styles.empty}>No decisions recorded yet. Run <code>oversight capture</code> to add your first.</p>
         ) : (
           <div className={styles.recentList}>
             {recent.map((d) => (
@@ -231,7 +231,7 @@ function ErrorState({ message }: { message: string }) {
   return (
     <div className={styles.centerState}>
       <p className={styles.errorText}>Failed to load: {message}</p>
-      <p className={styles.errorHint}>Make sure you ran <code>whycode init</code> in this directory.</p>
+      <p className={styles.errorHint}>Make sure you ran <code>oversight init</code> in this directory.</p>
     </div>
   )
 }

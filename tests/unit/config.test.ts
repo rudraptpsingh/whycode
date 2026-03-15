@@ -2,10 +2,10 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest"
 import fs from "fs"
 import os from "os"
 import path from "path"
-import { writeConfig, readConfig, getDbPath, findWhycodeDir } from "../../src/utils/config.js"
+import { writeConfig, readConfig, getDbPath, findOversightDir } from "../../src/utils/config.js"
 
 function tmpDir(): string {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "whycode-config-test-"))
+  return fs.mkdtempSync(path.join(os.tmpdir(), "oversight-config-test-"))
 }
 
 describe("config utilities", () => {
@@ -23,21 +23,21 @@ describe("config utilities", () => {
   })
 
   it("throws when no config exists", () => {
-    expect(() => readConfig(tmpdir)).toThrow("WhyCode not initialized")
+    expect(() => readConfig(tmpdir)).toThrow("Oversight not initialized")
   })
 
   it("getDbPath returns correct path", () => {
     writeConfig({ version: "1.0.0", author: "Bob", repoRoot: tmpdir, createdAt: new Date().toISOString() }, tmpdir)
     const dbPath = getDbPath(tmpdir)
     expect(dbPath).toContain("decisions.db")
-    expect(dbPath).toContain(".whycode")
+    expect(dbPath).toContain(".oversight")
   })
 
-  it("findWhycodeDir walks up the tree", () => {
+  it("findOversightDir walks up the tree", () => {
     writeConfig({ version: "1.0.0", author: "Carol", repoRoot: tmpdir, createdAt: new Date().toISOString() }, tmpdir)
     const nestedDir = path.join(tmpdir, "src", "deep", "nested")
     fs.mkdirSync(nestedDir, { recursive: true })
-    const found = findWhycodeDir(nestedDir)
-    expect(found).toBe(path.join(tmpdir, ".whycode"))
+    const found = findOversightDir(nestedDir)
+    expect(found).toBe(path.join(tmpdir, ".oversight"))
   })
 })

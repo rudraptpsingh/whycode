@@ -10,13 +10,13 @@ import { handleGetBySymbol } from "../../src/mcp/tools/getBySymbol.js"
 import { handleSearch } from "../../src/mcp/tools/search.js"
 import { handleRecord } from "../../src/mcp/tools/record.js"
 import { handleCheckChange } from "../../src/mcp/tools/checkChange.js"
-import type { WhyCodeRecord } from "../../src/types/index.js"
+import type { OversightRecord } from "../../src/types/index.js"
 
 function tmpDir(): string {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "whycode-mcp-test-"))
+  return fs.mkdtempSync(path.join(os.tmpdir(), "oversight-mcp-test-"))
 }
 
-function makeRecord(overrides: Partial<WhyCodeRecord> = {}): WhyCodeRecord {
+function makeRecord(overrides: Partial<OversightRecord> = {}): OversightRecord {
   return {
     id: uuidv4(), version: 1, status: "active",
     anchors: [{ type: "file", path: "src/auth.ts" }],
@@ -37,7 +37,7 @@ describe("MCP tools integration", () => {
   beforeEach(() => { tmpdir = tmpDir() })
   afterEach(() => { fs.rmSync(tmpdir, { recursive: true, force: true }) })
 
-  describe("whycode_get_by_path", () => {
+  describe("oversight_get_by_path", () => {
     it("returns decisions for a path", () => {
       const db = initDb(tmpdir)
       const r = makeRecord()
@@ -65,7 +65,7 @@ describe("MCP tools integration", () => {
     })
   })
 
-  describe("whycode_get_by_symbol", () => {
+  describe("oversight_get_by_symbol", () => {
     it("finds records by symbol name", () => {
       const db = initDb(tmpdir)
       const r = makeRecord({ anchors: [{ type: "function", path: "src/auth.ts", identifier: "validateToken" }] })
@@ -81,7 +81,7 @@ describe("MCP tools integration", () => {
     })
   })
 
-  describe("whycode_search", () => {
+  describe("oversight_search", () => {
     it("returns results for a matching query", () => {
       const db = initDb(tmpdir)
       insertDecision(db, makeRecord({ title: "JWT authentication decision" }))
@@ -95,7 +95,7 @@ describe("MCP tools integration", () => {
     })
   })
 
-  describe("whycode_record", () => {
+  describe("oversight_record", () => {
     it("creates a new record and returns it", () => {
       const db = initDb(tmpdir)
       const result = handleRecord(db, {
@@ -108,7 +108,7 @@ describe("MCP tools integration", () => {
     })
   })
 
-  describe("whycode_check_change", () => {
+  describe("oversight_check_change", () => {
     it("assesses risk across multiple paths", () => {
       const db = initDb(tmpdir)
       insertDecision(db, makeRecord({ constraints: [{ description: "Never bypass auth", severity: "must", rationale: "Security" }] }))

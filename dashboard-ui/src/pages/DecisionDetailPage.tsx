@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import type { Page } from "../App"
 import { fetchDecision, updateDecisionStatus, deleteDecision } from "../api"
-import type { WhyCodeRecord, DecisionStatus, Constraint } from "../types"
+import type { OversightRecord, DecisionStatus, Constraint } from "../types"
 import { decisionTypeBadge, statusBadge, confidenceBadge, constraintBadge } from "../components/Badge"
 import styles from "./DecisionDetailPage.module.css"
 
@@ -13,7 +13,7 @@ interface Props {
 const STATUSES: DecisionStatus[] = ["active", "proposed", "needs-review", "superseded", "deprecated"]
 
 export default function DecisionDetailPage({ id, onNavigate }: Props) {
-  const [decision, setDecision] = useState<WhyCodeRecord | null>(null)
+  const [decision, setDecision] = useState<OversightRecord | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [updating, setUpdating] = useState(false)

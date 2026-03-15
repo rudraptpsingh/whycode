@@ -1,10 +1,10 @@
 import Anthropic from "@anthropic-ai/sdk"
-import type { WhyCodeRecord, StalenessResult } from "../types/index.js"
+import type { OversightRecord, StalenessResult } from "../types/index.js"
 
 const client = new Anthropic()
 
 export async function checkStaleness(
-  record: WhyCodeRecord,
+  record: OversightRecord,
   fileContents: Map<string, string>
 ): Promise<StalenessResult> {
   const filesSection = Array.from(fileContents.entries())

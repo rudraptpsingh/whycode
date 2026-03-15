@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest"
 import { matchesAnchor, formatAnchorsForDisplay } from "../../src/utils/anchor.js"
-import type { WhyCodeRecord, CodeAnchor } from "../../src/types/index.js"
+import type { OversightRecord, CodeAnchor } from "../../src/types/index.js"
 
-function makeRecord(anchors: CodeAnchor[]): WhyCodeRecord {
+function makeRecord(anchors: CodeAnchor[]): OversightRecord {
   return {
     id: "test-id", version: 1, status: "active", anchors,
     title: "Test", summary: "test", context: "", decision: "", rationale: "",

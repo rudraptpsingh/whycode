@@ -1,6 +1,6 @@
 export type {
-  WhyCodeRecord,
-  WhyCodeConfig,
+  OversightRecord,
+  OversightConfig,
   CodeAnchor,
   Constraint,
   ConstraintSeverity,
@@ -28,7 +28,7 @@ export { initDb, getDb } from "./db/schema.js"
 
 export { searchDecisions } from "./db/search.js"
 
-export type { CheckChangeLogEntry, WhyCodeMetrics } from "./db/metrics.js"
+export type { CheckChangeLogEntry, OversightMetrics } from "./db/metrics.js"
 export { logCheckChange, computeMetrics } from "./db/metrics.js"
 
-export { findWhycodeDir, readConfig, writeConfig, getWhycodeDir, getDbPath } from "./utils/config.js"
+export { findOversightDir, readConfig, writeConfig, getOversightDir, getDbPath } from "./utils/config.js"

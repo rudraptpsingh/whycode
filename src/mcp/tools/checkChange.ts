@@ -1,10 +1,10 @@
 import Database from "better-sqlite3"
 import { getDecisionsByPath } from "../../db/decisions.js"
 import { logCheckChange } from "../../db/metrics.js"
-import type { WhyCodeRecord, Constraint, CheckChangeResult } from "../../types/index.js"
+import type { OversightRecord, Constraint, CheckChangeResult } from "../../types/index.js"
 
 export const checkChangeTool = {
-  name: "whycode_check_change",
+  name: "oversight_check_change",
   description:
     "Before making a significant change, get all relevant decisions and a risk assessment. Use this for multi-file refactors.",
   inputSchema: {
@@ -21,7 +21,7 @@ export function handleCheckChange(
   db: Database.Database,
   input: { changeDescription: string; affectedPaths: string[] }
 ): CheckChangeResult {
-  const allDecisions: WhyCodeRecord[] = []
+  const allDecisions: OversightRecord[] = []
   const seen = new Set<string>()
 
   for (const filePath of input.affectedPaths) {

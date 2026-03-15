@@ -1,5 +1,5 @@
 import chalk from "chalk"
-import type { WhyCodeRecord } from "../types/index.js"
+import type { OversightRecord } from "../types/index.js"
 
 export const logger = {
   success(msg: string): void {
@@ -14,7 +14,7 @@ export const logger = {
   info(msg: string): void {
     console.log(chalk.blue("ℹ") + " " + msg)
   },
-  decision(record: WhyCodeRecord): void {
+  decision(record: OversightRecord): void {
     console.log("")
     console.log(chalk.bold("─".repeat(60)))
     console.log(chalk.bold.cyan(`  ${record.title}`))

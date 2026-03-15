@@ -2,9 +2,9 @@
  * Integration tests for auto-recording, deduplication, and merge features.
  *
  * Tests validate:
- * 1. whycode_record automatically deduplicates (skip/merge/insert)
- * 2. whycode_find_similar surfaces near-duplicate records before insert
- * 3. whycode_merge consolidates two records and marks source superseded
+ * 1. oversight_record automatically deduplicates (skip/merge/insert)
+ * 2. oversight_find_similar surfaces near-duplicate records before insert
+ * 3. oversight_merge consolidates two records and marks source superseded
  * 4. Source/conversation origin is captured and retrievable
  * 5. Agent re-recording the same constraint is caught and merged
  */
@@ -25,13 +25,13 @@ import {
 import { handleRecord } from "../../src/mcp/tools/record.js"
 import { handleFindSimilar } from "../../src/mcp/tools/findSimilar.js"
 import { handleMerge } from "../../src/mcp/tools/merge.js"
-import type { WhyCodeRecord } from "../../src/types/index.js"
+import type { OversightRecord } from "../../src/types/index.js"
 
 function tmpDir(): string {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "whycode-autorecord-test-"))
+  return fs.mkdtempSync(path.join(os.tmpdir(), "oversight-autorecord-test-"))
 }
 
-function makeRecord(overrides: Partial<WhyCodeRecord> = {}): WhyCodeRecord {
+function makeRecord(overrides: Partial<OversightRecord> = {}): OversightRecord {
   return {
     id: uuidv4(),
     version: 1,
@@ -59,7 +59,7 @@ function makeRecord(overrides: Partial<WhyCodeRecord> = {}): WhyCodeRecord {
 
 // ─── Deduplication Tests ──────────────────────────────────────────────────────
 
-describe("Auto-recording: deduplication via whycode_record", () => {
+describe("Auto-recording: deduplication via oversight_record", () => {
   let tmpdir: string
 
   beforeEach(() => { tmpdir = tmpDir() })
@@ -202,9 +202,9 @@ describe("Auto-recording: deduplication via whycode_record", () => {
   })
 })
 
-// ─── whycode_find_similar Tests ───────────────────────────────────────────────
+// ─── oversight_find_similar Tests ───────────────────────────────────────────────
 
-describe("whycode_find_similar: pre-insert duplicate detection", () => {
+describe("oversight_find_similar: pre-insert duplicate detection", () => {
   let tmpdir: string
 
   beforeEach(() => { tmpdir = tmpDir() })
@@ -281,9 +281,9 @@ describe("whycode_find_similar: pre-insert duplicate detection", () => {
   })
 })
 
-// ─── whycode_merge Tests ──────────────────────────────────────────────────────
+// ─── oversight_merge Tests ──────────────────────────────────────────────────────
 
-describe("whycode_merge: consolidating duplicate decisions", () => {
+describe("oversight_merge: consolidating duplicate decisions", () => {
   let tmpdir: string
 
   beforeEach(() => { tmpdir = tmpDir() })

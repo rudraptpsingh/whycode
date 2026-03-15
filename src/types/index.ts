@@ -45,7 +45,7 @@ export interface ConversationSource {
   excerpt?: string
 }
 
-export interface WhyCodeRecord {
+export interface OversightRecord {
   id: string
   version: number
   status: DecisionStatus
@@ -74,7 +74,7 @@ export interface WhyCodeRecord {
 }
 
 export interface SimilarDecision {
-  record: WhyCodeRecord
+  record: OversightRecord
   score: number
   matchReasons: string[]
 }
@@ -86,7 +86,7 @@ export interface DuplicateCheckResult {
   recommendedTargetId?: string
 }
 
-export interface WhyCodeConfig {
+export interface OversightConfig {
   version: string
   author: string
   repoRoot: string
@@ -108,7 +108,7 @@ export interface StalenessResult {
 }
 
 export interface CheckChangeResult {
-  relevantDecisions: WhyCodeRecord[]
+  relevantDecisions: OversightRecord[]
   mustConstraints: Constraint[]
   warnings: string[]
   riskLevel: "low" | "medium" | "high"

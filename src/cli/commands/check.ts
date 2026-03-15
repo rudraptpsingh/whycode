@@ -1,5 +1,5 @@
 import { Command } from "commander"
-import { getWhycodeDir } from "../../utils/config.js"
+import { getOversightDir } from "../../utils/config.js"
 import { getDb } from "../../db/schema.js"
 import { getDecisionsByPath } from "../../db/decisions.js"
 import { logger } from "../../utils/logger.js"
@@ -10,8 +10,8 @@ export function registerCheck(program: Command): void {
     .description("Show decisions anchored to a file path")
     .option("--json", "Output raw JSON")
     .action(async (filepath: string, opts: { json?: boolean }) => {
-      const whycodeDir = getWhycodeDir()
-      const db = getDb(whycodeDir)
+      const oversightDir = getOversightDir()
+      const db = getDb(oversightDir)
       const records = getDecisionsByPath(db, filepath)
 
       if (opts.json) {
@@ -20,7 +20,7 @@ export function registerCheck(program: Command): void {
       }
 
       if (records.length === 0) {
-        logger.info(`No WhyCode decisions for this path: ${filepath}`)
+        logger.info(`No Oversight decisions for this path: ${filepath}`)
         return
       }
 

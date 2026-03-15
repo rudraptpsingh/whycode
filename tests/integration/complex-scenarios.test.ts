@@ -18,13 +18,13 @@ import { handleGetBySymbol } from "../../src/mcp/tools/getBySymbol.js"
 import { handleSearch } from "../../src/mcp/tools/search.js"
 import { handleRecord } from "../../src/mcp/tools/record.js"
 import { handleCheckChange } from "../../src/mcp/tools/checkChange.js"
-import type { WhyCodeRecord, Constraint } from "../../src/types/index.js"
+import type { OversightRecord, Constraint } from "../../src/types/index.js"
 
 function tmpDir(): string {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "whycode-complex-test-"))
+  return fs.mkdtempSync(path.join(os.tmpdir(), "oversight-complex-test-"))
 }
 
-function makeRecord(overrides: Partial<WhyCodeRecord> = {}): WhyCodeRecord {
+function makeRecord(overrides: Partial<OversightRecord> = {}): OversightRecord {
   return {
     id: uuidv4(),
     version: 1,

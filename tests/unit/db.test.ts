@@ -9,13 +9,13 @@ import {
   getAllDecisions, updateDecision, deleteDecision,
 } from "../../src/db/decisions.js"
 import { searchDecisions } from "../../src/db/search.js"
-import type { WhyCodeRecord } from "../../src/types/index.js"
+import type { OversightRecord } from "../../src/types/index.js"
 
 function tmpDir(): string {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "whycode-test-"))
+  return fs.mkdtempSync(path.join(os.tmpdir(), "oversight-test-"))
 }
 
-function makeRecord(overrides: Partial<WhyCodeRecord> = {}): WhyCodeRecord {
+function makeRecord(overrides: Partial<OversightRecord> = {}): OversightRecord {
   return {
     id: uuidv4(), version: 1, status: "active",
     anchors: [{ type: "file", path: "src/auth/validator.ts" }],

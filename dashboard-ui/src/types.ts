@@ -39,7 +39,7 @@ export interface AgentHint {
   scope: "file" | "function" | "pattern"
 }
 
-export interface WhyCodeRecord {
+export interface OversightRecord {
   id: string
   version: number
   status: DecisionStatus
@@ -66,7 +66,7 @@ export interface WhyCodeRecord {
   reviewTriggers: string[]
 }
 
-export interface WhyCodeMetrics {
+export interface OversightMetrics {
   decisions: {
     total: number
     active: number

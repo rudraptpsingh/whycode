@@ -1,5 +1,5 @@
 import Database from "better-sqlite3"
-import type { WhyCodeRecord, CheckChangeResult, DecisionType, Confidence } from "../types/index.js"
+import type { OversightRecord, CheckChangeResult, DecisionType, Confidence } from "../types/index.js"
 
 export interface CheckChangeLogEntry {
   changeDescription: string
@@ -12,7 +12,7 @@ export interface CheckChangeLogEntry {
   timestamp: string
 }
 
-export interface WhyCodeMetrics {
+export interface OversightMetrics {
   decisions: {
     total: number
     active: number
@@ -64,7 +64,7 @@ export function logCheckChange(db: Database.Database, entry: CheckChangeLogEntry
   )
 }
 
-export function computeMetrics(db: Database.Database): WhyCodeMetrics {
+export function computeMetrics(db: Database.Database): OversightMetrics {
   const rows = db.prepare("SELECT * FROM decisions").all() as Array<Record<string, unknown>>
 
   const typeMap = {} as Record<DecisionType, number>

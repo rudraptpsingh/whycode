@@ -8,13 +8,13 @@ import { insertDecision } from "../../src/db/decisions.js"
 import { computeMetrics, logCheckChange } from "../../src/db/metrics.js"
 import { handleCheckChange } from "../../src/mcp/tools/checkChange.js"
 import { handleGetMetrics } from "../../src/mcp/tools/metrics.js"
-import type { WhyCodeRecord } from "../../src/types/index.js"
+import type { OversightRecord } from "../../src/types/index.js"
 
 function tmpDir(): string {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "whycode-metrics-test-"))
+  return fs.mkdtempSync(path.join(os.tmpdir(), "oversight-metrics-test-"))
 }
 
-function makeRecord(overrides: Partial<WhyCodeRecord> = {}): WhyCodeRecord {
+function makeRecord(overrides: Partial<OversightRecord> = {}): OversightRecord {
   return {
     id: uuidv4(), version: 1, status: "active",
     anchors: [{ type: "file", path: "src/auth.ts" }],
@@ -249,7 +249,7 @@ describe("metrics: logCheckChange and aggregation", () => {
   })
 })
 
-describe("metrics: whycode_get_metrics MCP tool", () => {
+describe("metrics: oversight_get_metrics MCP tool", () => {
   let tmpdir: string
 
   beforeEach(() => { tmpdir = tmpDir() })

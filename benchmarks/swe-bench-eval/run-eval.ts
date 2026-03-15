@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * WhyCode SWE-bench Style Evaluation — Full MVP Benchmark
+ * Oversight SWE-bench Style Evaluation — Full MVP Benchmark
  *
  * Evaluates 4 dimensions across 3 real-world scenarios:
  *
@@ -10,17 +10,17 @@
  *   Phase 3: Full audit → all constraints block all bad mutations
  *
  * Dimension 2 — Auto-recording from conversation:
- *   Simulates agent/user decisions being captured via whycode_record
+ *   Simulates agent/user decisions being captured via oversight_record
  *   Verifies constraints are stored with correct source context
  *
  * Dimension 3 — Deduplication prevention:
  *   Simulates multiple agents/sources recording same constraint independently
  *   Verifies skip/merge fires instead of creating duplicate records
  *
- * Dimension 4 — Agent improvement via whycode constraints:
+ * Dimension 4 — Agent improvement via oversight constraints:
  *   Compares constrained agent (reads whycode before coding) vs
  *   unconstrained agent (codes without checking) on the same mutations
- *   Shows the measurable uplift WhyCode gives to coding agents
+ *   Shows the measurable uplift Oversight gives to coding agents
  */
 
 import { mkdirSync, existsSync, rmSync, writeFileSync } from "fs";
@@ -48,7 +48,7 @@ import {
   AUTH_RECORDS,
   RATE_LIMITER_RECORDS,
   DB_TRANSACTION_RECORDS,
-} from "./whycode-records.js";
+} from "./oversight-records.js";
 
 import {
   MUTATION_A as AUTH_A,
@@ -90,7 +90,7 @@ mkdirSync(outDir, { recursive: true });
 // ─── Setup Per-Scenario DB ────────────────────────────────────────────────────
 
 function makeDb(name: string) {
-  const dbDir = join(outDir, `.whycode-${name}`);
+  const dbDir = join(outDir, `.oversight-${name}`);
   if (existsSync(dbDir)) rmSync(dbDir, { recursive: true, force: true });
   return initDb(dbDir);
 }
@@ -389,13 +389,13 @@ interface AgentComparisonResult {
   mutations: Array<{
     mutation_id: string;
     label: string;
-    without_whycode_passes: boolean;
-    with_whycode_passes: boolean;
-    whycode_caught_bug: boolean;
+    without_oversight_passes: boolean;
+    with_oversight_passes: boolean;
+    oversight_caught_bug: boolean;
     is_correct: boolean;
   }>;
   bad_merges_baseline: number;
-  bad_merges_with_whycode: number;
+  bad_merges_with_oversight: number;
   bugs_caught: number;
   improvement_pct: number;
   false_negatives: number;
@@ -408,22 +408,22 @@ function runAgentImprovementDimension(scenario: ScenarioConfig): AgentComparison
     return {
       mutation_id: m.id,
       label: m.label,
-      without_whycode_passes: baseline.would_merge,
-      with_whycode_passes: withWhycode.would_merge,
-      whycode_caught_bug: baseline.would_merge && !withWhycode.would_merge,
+      without_oversight_passes: baseline.would_merge,
+      with_oversight_passes: withWhycode.would_merge,
+      oversight_caught_bug: baseline.would_merge && !withWhycode.would_merge,
       is_correct: m.id === "D",
     };
   });
   const wrongMutations = mutations.filter((m) => !m.is_correct);
-  const badBaseline = wrongMutations.filter((m) => m.without_whycode_passes).length;
-  const badWithWhycode = wrongMutations.filter((m) => m.with_whycode_passes).length;
-  const bugsCaught = wrongMutations.filter((m) => m.whycode_caught_bug).length;
-  const falseNegs = mutations.filter((m) => m.is_correct && !m.with_whycode_passes).length;
+  const badBaseline = wrongMutations.filter((m) => m.without_oversight_passes).length;
+  const badWithWhycode = wrongMutations.filter((m) => m.with_oversight_passes).length;
+  const bugsCaught = wrongMutations.filter((m) => m.oversight_caught_bug).length;
+  const falseNegs = mutations.filter((m) => m.is_correct && !m.with_oversight_passes).length;
   return {
     scenario_id: scenario.id,
     mutations,
     bad_merges_baseline: badBaseline,
-    bad_merges_with_whycode: badWithWhycode,
+    bad_merges_with_oversight: badWithWhycode,
     bugs_caught: bugsCaught,
     improvement_pct: badBaseline > 0 ? Math.round(((badBaseline - badWithWhycode) / badBaseline) * 100) : 100,
     false_negatives: falseNegs,
@@ -435,7 +435,7 @@ function runAgentImprovementDimension(scenario: ScenarioConfig): AgentComparison
 async function runBenchmark(): Promise<void> {
   console.log("\n╔══════════════════════════════════════════════════════════════════════╗");
   console.log("║                                                                      ║");
-  console.log("║       WhyCode SWE-bench Style Evaluation — Full MVP Benchmark       ║");
+  console.log("║       Oversight SWE-bench Style Evaluation — Full MVP Benchmark       ║");
   console.log("║       Constraint Recording · Deduplication · Agent Improvement      ║");
   console.log("║                                                                      ║");
   console.log("╚══════════════════════════════════════════════════════════════════════╝\n");
@@ -505,18 +505,18 @@ async function runBenchmark(): Promise<void> {
     for (const m of improvement.mutations) {
       if (m.is_correct) {
         console.log(`  ✅ ${m.label.padEnd(50)} Correct — passes in both modes`);
-      } else if (m.whycode_caught_bug) {
-        console.log(`  ✅ ${m.label.padEnd(50)} BUG CAUGHT — baseline passes, WhyCode blocks`);
-      } else if (!m.with_whycode_passes) {
+      } else if (m.oversight_caught_bug) {
+        console.log(`  ✅ ${m.label.padEnd(50)} BUG CAUGHT — baseline passes, Oversight blocks`);
+      } else if (!m.with_oversight_passes) {
         console.log(`  ✅ ${m.label.padEnd(50)} Both modes block`);
       } else {
         console.log(`  ⚠  ${m.label.padEnd(50)} Still passes — check constraint check logic`);
       }
     }
-    console.log(`\n  Without WhyCode (Phase 1): ${improvement.bad_merges_baseline}/${totalBadMutations} bad mutations would merge`);
-    console.log(`  With WhyCode (Phase 6):    ${improvement.bad_merges_with_whycode}/${totalBadMutations} bad mutations would merge`);
+    console.log(`\n  Without Oversight (Phase 1): ${improvement.bad_merges_baseline}/${totalBadMutations} bad mutations would merge`);
+    console.log(`  With Oversight (Phase 6):    ${improvement.bad_merges_with_oversight}/${totalBadMutations} bad mutations would merge`);
     if (improvement.bugs_caught > 0) {
-      console.log(`  WhyCode caught ${improvement.bugs_caught} bug(s) — ${improvement.improvement_pct}% improvement`);
+      console.log(`  Oversight caught ${improvement.bugs_caught} bug(s) — ${improvement.improvement_pct}% improvement`);
     }
     if (improvement.false_negatives === 0) {
       console.log("  ✅ No false negatives — Mutation D (correct code) always passes");
@@ -586,16 +586,16 @@ async function runBenchmark(): Promise<void> {
   for (const r of allScenarios) {
     const scenarioWrong = r.improvement.mutations.filter((m) => !m.is_correct).length;
     totalBadBaseline += r.improvement.bad_merges_baseline;
-    totalBadWithWhycode += r.improvement.bad_merges_with_whycode;
+    totalBadWithWhycode += r.improvement.bad_merges_with_oversight;
     totalFalseNeg += r.improvement.false_negatives;
-    const icon = r.improvement.bad_merges_with_whycode === 0 ? "✅" : "⚠ ";
-    console.log(`    ${icon} ${r.scenario_label}: ${r.improvement.bad_merges_baseline}/${scenarioWrong} → ${r.improvement.bad_merges_with_whycode}/${scenarioWrong} bad merges (${r.improvement.improvement_pct}% improvement)`);
+    const icon = r.improvement.bad_merges_with_oversight === 0 ? "✅" : "⚠ ";
+    console.log(`    ${icon} ${r.scenario_label}: ${r.improvement.bad_merges_baseline}/${scenarioWrong} → ${r.improvement.bad_merges_with_oversight}/${scenarioWrong} bad merges (${r.improvement.improvement_pct}% improvement)`);
   }
   const overallImprovement = totalBadBaseline > 0
     ? Math.round(((totalBadBaseline - totalBadWithWhycode) / totalBadBaseline) * 100)
     : 100;
-  console.log(`\n    Without WhyCode: ${totalBadBaseline}/${totalWrong} bad mutations accepted`);
-  console.log(`    With WhyCode:    ${totalBadWithWhycode}/${totalWrong} bad mutations accepted`);
+  console.log(`\n    Without Oversight: ${totalBadBaseline}/${totalWrong} bad mutations accepted`);
+  console.log(`    With Oversight:    ${totalBadWithWhycode}/${totalWrong} bad mutations accepted`);
   console.log(`    Improvement:     ${overallImprovement}% reduction in bad-merge acceptance`);
   if (totalFalseNeg === 0) {
     console.log("    ✅ No false negatives across all scenarios");
@@ -619,10 +619,10 @@ async function runBenchmark(): Promise<void> {
   );
 
   console.log(`
-  1. WITHOUT WhyCode (Phase 1 — no constraints): ${p1WrongSafe}/${totalWrong} wrong mutations accepted
+  1. WITHOUT Oversight (Phase 1 — no constraints): ${p1WrongSafe}/${totalWrong} wrong mutations accepted
      An unconstrained agent would introduce security bugs and data corruption into production
 
-  2. WITH full WhyCode constraints (Phase 6):     ${p6WrongSafe}/${totalWrong} wrong mutations accepted
+  2. WITH full Oversight constraints (Phase 6):     ${p6WrongSafe}/${totalWrong} wrong mutations accepted
      ${reduction}% reduction in bad-merge acceptance rate
 
   3. PROGRESSIVE IMPROVEMENT across 6 phases:
@@ -638,7 +638,7 @@ async function runBenchmark(): Promise<void> {
      Agents and humans converge to shared knowledge instead of fragmenting it
 
   6. Correct code always accepted (${allDPass ? "no false negatives" : "WARNING: false negatives detected"}):
-     WhyCode never blocks a correct implementation
+     Oversight never blocks a correct implementation
 
   7. Real-world incident costs prevented: $1.5M+ across 12 constraint patterns
   `);
@@ -709,8 +709,8 @@ async function runBenchmark(): Promise<void> {
         accuracy_pct: dedupAccuracy,
       },
       dim4_agent_improvement: {
-        bad_merges_without_whycode: totalBadBaseline,
-        bad_merges_with_whycode: totalBadWithWhycode,
+        bad_merges_without_oversight: totalBadBaseline,
+        bad_merges_with_oversight: totalBadWithWhycode,
         improvement_pct: overallImprovement,
         false_negatives: totalFalseNeg,
       },

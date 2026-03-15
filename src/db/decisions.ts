@@ -1,5 +1,5 @@
 import Database from "better-sqlite3"
-import type { WhyCodeRecord, DecisionStatus, SimilarDecision, DuplicateCheckResult } from "../types/index.js"
+import type { OversightRecord, DecisionStatus, SimilarDecision, DuplicateCheckResult } from "../types/index.js"
 
 interface RawRow {
   id: string
@@ -29,11 +29,11 @@ interface RawRow {
   source_json: string | null
 }
 
-function rowToRecord(row: RawRow): WhyCodeRecord {
+function rowToRecord(row: RawRow): OversightRecord {
   return {
     id: row.id,
     version: row.version,
-    status: row.status as WhyCodeRecord["status"],
+    status: row.status as OversightRecord["status"],
     anchors: JSON.parse(row.anchors_json),
     title: row.title,
     summary: row.summary,
@@ -44,8 +44,8 @@ function rowToRecord(row: RawRow): WhyCodeRecord {
     alternatives: JSON.parse(row.alternatives_json),
     consequences: row.consequences,
     tags: JSON.parse(row.tags_json),
-    decisionType: row.decision_type as WhyCodeRecord["decisionType"],
-    confidence: row.confidence as WhyCodeRecord["confidence"],
+    decisionType: row.decision_type as OversightRecord["decisionType"],
+    confidence: row.confidence as OversightRecord["confidence"],
     author: row.author,
     timestamp: row.timestamp,
     linkedPR: row.linked_pr ?? undefined,
@@ -59,7 +59,7 @@ function rowToRecord(row: RawRow): WhyCodeRecord {
   }
 }
 
-function insertFts(db: Database.Database, record: WhyCodeRecord): void {
+function insertFts(db: Database.Database, record: OversightRecord): void {
   db.prepare(`
     INSERT INTO decisions_fts(decision_id, title, summary, context, decision_text, rationale, tags_text)
     VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -78,7 +78,7 @@ function deleteFts(db: Database.Database, id: string): void {
   db.prepare("DELETE FROM decisions_fts WHERE decision_id = ?").run(id)
 }
 
-export function insertDecision(db: Database.Database, record: WhyCodeRecord): void {
+export function insertDecision(db: Database.Database, record: OversightRecord): void {
   db.prepare(`
     INSERT INTO decisions (
       id, version, status, anchors_json, title, summary, context, decision, rationale,
@@ -122,13 +122,13 @@ export function insertDecision(db: Database.Database, record: WhyCodeRecord): vo
   insertFts(db, record)
 }
 
-export function getDecisionById(db: Database.Database, id: string): WhyCodeRecord | null {
+export function getDecisionById(db: Database.Database, id: string): OversightRecord | null {
   const row = db.prepare("SELECT * FROM decisions WHERE id = ?").get(id) as RawRow | undefined
   if (!row) return null
   return rowToRecord(row)
 }
 
-export function getDecisionsByPath(db: Database.Database, filePath: string): WhyCodeRecord[] {
+export function getDecisionsByPath(db: Database.Database, filePath: string): OversightRecord[] {
   const normalizedPath = filePath.replace(/^\.\//, "").replace(/\\/g, "/")
   const rows = db.prepare("SELECT * FROM decisions").all() as RawRow[]
   return rows
@@ -145,7 +145,7 @@ export function getDecisionsByPath(db: Database.Database, filePath: string): Why
     )
 }
 
-export function getDecisionsByTag(db: Database.Database, tag: string): WhyCodeRecord[] {
+export function getDecisionsByTag(db: Database.Database, tag: string): OversightRecord[] {
   const rows = db.prepare("SELECT * FROM decisions").all() as RawRow[]
   return rows.map(rowToRecord).filter((record) => record.tags.includes(tag))
 }
@@ -153,7 +153,7 @@ export function getDecisionsByTag(db: Database.Database, tag: string): WhyCodeRe
 export function getAllDecisions(
   db: Database.Database,
   statusFilter?: DecisionStatus
-): WhyCodeRecord[] {
+): OversightRecord[] {
   const rows = statusFilter
     ? (db.prepare("SELECT * FROM decisions WHERE status = ?").all(statusFilter) as RawRow[])
     : (db.prepare("SELECT * FROM decisions").all() as RawRow[])
@@ -163,8 +163,8 @@ export function getAllDecisions(
 export function updateDecision(
   db: Database.Database,
   id: string,
-  updates: Partial<WhyCodeRecord>
-): WhyCodeRecord | null {
+  updates: Partial<OversightRecord>
+): OversightRecord | null {
   const existing = getDecisionById(db, id)
   if (!existing) return null
 
@@ -232,7 +232,7 @@ function jaccardSimilarity(a: Set<string>, b: Set<string>): number {
 }
 
 export function computeSimilarityScore(
-  candidate: WhyCodeRecord,
+  candidate: OversightRecord,
   incoming: { title: string; summary: string; decision: string; tags?: string[] }
 ): { score: number; matchReasons: string[] } {
   const matchReasons: string[] = []
@@ -326,14 +326,14 @@ export function checkForDuplicates(
 export function mergeDecisions(
   db: Database.Database,
   targetId: string,
-  incomingData: Partial<WhyCodeRecord> & { mergedFromId?: string }
-): WhyCodeRecord | null {
+  incomingData: Partial<OversightRecord> & { mergedFromId?: string }
+): OversightRecord | null {
   const target = getDecisionById(db, targetId)
   if (!target) return null
 
   const mergedFromId = incomingData.mergedFromId
 
-  const merged: Partial<WhyCodeRecord> = {
+  const merged: Partial<OversightRecord> = {
     constraints: mergeUnique(
       target.constraints,
       incomingData.constraints ?? [],

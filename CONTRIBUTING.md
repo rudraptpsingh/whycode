@@ -1,10 +1,10 @@
-# Contributing to WhyCode
+# Contributing to Oversight
 
 ## Getting Started
 
 ```bash
-git clone https://github.com/whycode-dev/whycode
-cd whycode
+git clone https://github.com/rudraptpsingh/oversight
+cd oversight
 npm install
 npm run build
 npm test
@@ -21,7 +21,7 @@ npm run dev:dashboard  # hot-reload Vite dev server on :5174
 In a separate terminal, start the API server in a test repo:
 
 ```bash
-npx whycode init       # in a test directory
+npx oversight init       # in a test directory
 npx tsx src/cli/index.ts dashboard --port 7654
 ```
 
@@ -58,8 +58,8 @@ tests/
 
 Benchmarks live in `benchmarks/`. A good benchmark:
 - Uses a real framework pattern (Next.js, Express, Django, etc.)
-- Has 2-4 constraints pre-loaded into WhyCode
-- Runs two simulated agents (A without WhyCode, B with WhyCode)
+- Has 2-4 constraints pre-loaded into Oversight
+- Runs two simulated agents (A without Oversight, B with Oversight)
 - Produces measurable, reproducible results
 - Documents the real-world incident or CVE it is based on
 

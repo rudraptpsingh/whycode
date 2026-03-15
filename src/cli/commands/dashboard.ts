@@ -6,7 +6,7 @@ export function registerDashboard(program: Command): void {
     .command("dashboard")
     .description("Open the visual decision dashboard in your browser")
     .option("-p, --port <number>", "Port to run the dashboard on", "7654")
-    .option("-d, --dir <path>", "Directory containing the .whycode folder")
+    .option("-d, --dir <path>", "Directory containing the .oversight folder")
     .option("--no-open", "Do not automatically open the browser")
     .action(async (opts: { port: string; dir?: string; open: boolean }) => {
       const port = parseInt(opts.port, 10)
@@ -22,7 +22,7 @@ export function registerDashboard(program: Command): void {
       await server.start()
 
       const url = `http://localhost:${port}`
-      console.log(`\n  WhyCode Dashboard running at ${url}\n`)
+      console.log(`\n  Oversight Dashboard running at ${url}\n`)
       console.log(`  Press Ctrl+C to stop\n`)
 
       if (opts.open !== false) {

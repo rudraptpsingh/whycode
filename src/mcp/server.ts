@@ -6,7 +6,7 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js"
 import { createRequire } from "module"
-import { getWhycodeDir } from "../utils/config.js"
+import { getOversightDir } from "../utils/config.js"
 import { getDb } from "../db/schema.js"
 import { getByPathTool, handleGetByPath } from "./tools/getByPath.js"
 import { getBySymbolTool, handleGetBySymbol } from "./tools/getBySymbol.js"
@@ -22,12 +22,12 @@ const require = createRequire(import.meta.url)
 const pkg = require("../../package.json") as { version: string }
 
 const server = new Server(
-  { name: "whycode", version: pkg.version },
+  { name: "oversight", version: pkg.version },
   { capabilities: { tools: {} } }
 )
 
-const whycodeDir = getWhycodeDir()
-const db = getDb(whycodeDir)
+const oversightDir = getOversightDir()
+const db = getDb(oversightDir)
 
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
   tools: [
@@ -51,31 +51,31 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     let result: unknown
 
     switch (name) {
-      case "whycode_get_by_path":
+      case "oversight_get_by_path":
         result = handleGetByPath(db, input as Parameters<typeof handleGetByPath>[1])
         break
-      case "whycode_get_by_symbol":
+      case "oversight_get_by_symbol":
         result = handleGetBySymbol(db, input as Parameters<typeof handleGetBySymbol>[1])
         break
-      case "whycode_search":
+      case "oversight_search":
         result = handleSearch(db, input as Parameters<typeof handleSearch>[1])
         break
-      case "whycode_record":
+      case "oversight_record":
         result = handleRecord(db, input as Parameters<typeof handleRecord>[1])
         break
-      case "whycode_check_change":
+      case "oversight_check_change":
         result = handleCheckChange(db, input as Parameters<typeof handleCheckChange>[1])
         break
-      case "whycode_get_metrics":
+      case "oversight_get_metrics":
         result = handleGetMetrics(db)
         break
-      case "whycode_find_similar":
+      case "oversight_find_similar":
         result = handleFindSimilar(db, input as Parameters<typeof handleFindSimilar>[1])
         break
-      case "whycode_capture_conversation":
+      case "oversight_capture_conversation":
         result = await handleCaptureConversation(db, input as Parameters<typeof handleCaptureConversation>[1])
         break
-      case "whycode_merge":
+      case "oversight_merge":
         result = handleMerge(db, input as Parameters<typeof handleMerge>[1])
         break
       default:
@@ -99,7 +99,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 async function main(): Promise<void> {
   const transport = new StdioServerTransport()
   await server.connect(transport)
-  process.stderr.write("WhyCode MCP server running on stdio\n")
+  process.stderr.write("Oversight MCP server running on stdio\n")
 }
 
 main().catch((err) => {

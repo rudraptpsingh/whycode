@@ -1,15 +1,15 @@
 import Anthropic from "@anthropic-ai/sdk"
 import { v4 as uuidv4 } from "uuid"
-import type { WhyCodeRecord, ConversationSource } from "../types/index.js"
+import type { OversightRecord, ConversationSource } from "../types/index.js"
 
 const client = new Anthropic()
 
 const SYSTEM_PROMPT = `You are a software architecture expert helping developers document code decisions.
-Given a rough note from a developer, expand it into a complete WhyCodeRecord JSON object.
+Given a rough note from a developer, expand it into a complete OversightRecord JSON object.
 
 Return ONLY valid JSON matching this TypeScript interface — no markdown, no preamble, no explanation:
 
-interface WhyCodeRecord {
+interface OversightRecord {
   id: string                    // Generate a new UUID v4
   version: number               // Always 1 for new records
   status: "active" | "superseded" | "deprecated" | "proposed" | "needs-review"
@@ -48,7 +48,7 @@ interface WhyCodeRecord {
   reviewTriggers: string[]
 }`
 
-export async function expandWithAI(roughNote: string, author: string): Promise<WhyCodeRecord> {
+export async function expandWithAI(roughNote: string, author: string): Promise<OversightRecord> {
   const attempt = async (userMessage: string): Promise<string> => {
     const response = await client.messages.create({
       model: "claude-sonnet-4-5",
@@ -63,18 +63,18 @@ export async function expandWithAI(roughNote: string, author: string): Promise<W
 
   let raw = await attempt(roughNote)
 
-  let parsed: Partial<WhyCodeRecord>
+  let parsed: Partial<OversightRecord>
   try {
     const jsonMatch = raw.match(/\{[\s\S]*\}/)
     if (!jsonMatch) throw new Error("No JSON object found in response")
-    parsed = JSON.parse(jsonMatch[0]) as Partial<WhyCodeRecord>
+    parsed = JSON.parse(jsonMatch[0]) as Partial<OversightRecord>
   } catch {
     raw = await attempt(
       `The previous response was not valid JSON. Please try again and return ONLY valid JSON.\n\nOriginal note: ${roughNote}`
     )
     const jsonMatch = raw.match(/\{[\s\S]*\}/)
     if (!jsonMatch) throw new Error("AI returned invalid JSON after retry")
-    parsed = JSON.parse(jsonMatch[0]) as Partial<WhyCodeRecord>
+    parsed = JSON.parse(jsonMatch[0]) as Partial<OversightRecord>
   }
 
   if (!parsed.title || !parsed.summary || !parsed.decision || !parsed.context) {
@@ -115,7 +115,7 @@ export interface ConversationMessage {
 }
 
 export interface ExtractedDecision {
-  record: Omit<WhyCodeRecord, "id" | "version" | "author" | "timestamp" | "status">
+  record: Omit<OversightRecord, "id" | "version" | "author" | "timestamp" | "status">
   confidence: number
   extractionReason: string
 }
@@ -159,7 +159,7 @@ export async function extractDecisionsFromConversation(
   messages: ConversationMessage[],
   source: ConversationSource,
   author: string
-): Promise<WhyCodeRecord[]> {
+): Promise<OversightRecord[]> {
   const conversationText = messages
     .map((m) => `${m.role === "user" ? "User" : "Agent"}: ${m.content}`)
     .join("\n\n")

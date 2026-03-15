@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid"
 import { insertDecision, checkForDuplicates, mergeDecisions } from "../../db/decisions.js"
 import { readConfig } from "../../utils/config.js"
 import type {
-  WhyCodeRecord,
+  OversightRecord,
   CodeAnchor,
   Constraint,
   AgentHint,
@@ -14,7 +14,7 @@ import type {
 } from "../../types/index.js"
 
 export const recordTool = {
-  name: "whycode_record",
+  name: "oversight_record",
   description:
     "Record a decision you (the agent) are making or that a user expressed. Use this when making a non-obvious architectural choice. The tool automatically checks for duplicate or similar existing records and will merge instead of creating a duplicate when appropriate. Returns the recorded or merged decision plus any duplicate warnings.",
   inputSchema: {
@@ -75,7 +75,7 @@ export function handleRecord(
   }
 ): {
   id: string
-  record: WhyCodeRecord
+  record: OversightRecord
   action: "inserted" | "merged" | "skipped"
   duplicateWarning?: string
   similarDecisions?: Array<{ id: string; title: string; score: number }>
@@ -144,7 +144,7 @@ export function handleRecord(
       }
     : { origin: "agent-decision" }
 
-  const record: WhyCodeRecord = {
+  const record: OversightRecord = {
     id: uuidv4(),
     version: 1,
     status: "active",
@@ -172,7 +172,7 @@ export function handleRecord(
 
   const result: {
     id: string
-    record: WhyCodeRecord
+    record: OversightRecord
     action: "inserted" | "merged" | "skipped"
     duplicateWarning?: string
     similarDecisions?: Array<{ id: string; title: string; score: number }>

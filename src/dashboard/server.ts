@@ -7,7 +7,7 @@ import { getDb } from "../db/schema.js"
 import { getAllDecisions, getDecisionById, updateDecision, deleteDecision } from "../db/decisions.js"
 import { searchDecisions } from "../db/search.js"
 import { computeMetrics } from "../db/metrics.js"
-import { getWhycodeDir } from "../utils/config.js"
+import { getOversightDir } from "../utils/config.js"
 import type { SearchOptions, DecisionStatus, DecisionType } from "../types/index.js"
 
 const require = createRequire(import.meta.url)
@@ -74,10 +74,10 @@ export function createDashboardServer(port = 7654, startDir?: string): { start: 
   let db: ReturnType<typeof getDb>
 
   try {
-    const whycodeDir = getWhycodeDir(startDir ?? process.cwd())
-    db = getDb(whycodeDir)
+    const oversightDir = getOversightDir(startDir ?? process.cwd())
+    db = getDb(oversightDir)
   } catch {
-    throw new Error("WhyCode is not initialized in this directory. Run `whycode init` first.")
+    throw new Error("Oversight is not initialized in this directory. Run `oversight init` first.")
   }
 
   const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
@@ -206,7 +206,7 @@ function fallbackHtml(port: number): string {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WhyCode Dashboard</title>
+<title>Oversight Dashboard</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
@@ -218,7 +218,7 @@ function fallbackHtml(port: number): string {
 </head>
 <body>
 <div class="card">
-  <h1>WhyCode Dashboard</h1>
+  <h1>Oversight Dashboard</h1>
   <p>API server is running on port ${port}.</p>
   <p>Build the dashboard UI with <code>npm run build:dashboard</code> or run the full dev server.</p>
   <p>API available at <code>http://localhost:${port}/api/decisions</code></p>

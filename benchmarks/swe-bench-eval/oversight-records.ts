@@ -12,11 +12,11 @@
  */
 
 import { v4 as uuidv4 } from "uuid";
-import type { WhyCodeRecord } from "../../src/types/index.js";
+import type { OversightRecord } from "../../src/types/index.js";
 
 // ─── Scenario 1: Auth Middleware ──────────────────────────────────────────────
 
-export const AUTH_RECORDS: WhyCodeRecord[] = [
+export const AUTH_RECORDS: OversightRecord[] = [
   {
     id: uuidv4(),
     version: 1,
@@ -282,7 +282,7 @@ export const AUTH_RECORDS: WhyCodeRecord[] = [
 
 // ─── Scenario 2: Rate Limiter ─────────────────────────────────────────────────
 
-export const RATE_LIMITER_RECORDS: WhyCodeRecord[] = [
+export const RATE_LIMITER_RECORDS: OversightRecord[] = [
   {
     id: uuidv4(),
     version: 1,
@@ -511,7 +511,7 @@ export const RATE_LIMITER_RECORDS: WhyCodeRecord[] = [
 
 // ─── Scenario 3: DB Transaction ───────────────────────────────────────────────
 
-export const DB_TRANSACTION_RECORDS: WhyCodeRecord[] = [
+export const DB_TRANSACTION_RECORDS: OversightRecord[] = [
   {
     id: uuidv4(),
     version: 1,

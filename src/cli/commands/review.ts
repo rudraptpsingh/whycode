@@ -1,6 +1,6 @@
 import { Command } from "commander"
 import inquirer from "inquirer"
-import { getWhycodeDir } from "../../utils/config.js"
+import { getOversightDir } from "../../utils/config.js"
 import { getDb } from "../../db/schema.js"
 import { getAllDecisions, updateDecision } from "../../db/decisions.js"
 import { logger } from "../../utils/logger.js"
@@ -12,8 +12,8 @@ export function registerReview(program: Command): void {
     .command("review")
     .description("Review decisions that need attention")
     .action(async () => {
-      const whycodeDir = getWhycodeDir()
-      const db = getDb(whycodeDir)
+      const oversightDir = getOversightDir()
+      const db = getDb(oversightDir)
       const all = getAllDecisions(db)
       const staleThreshold = Date.now() - STALE_DAYS * 24 * 60 * 60 * 1000
 

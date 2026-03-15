@@ -3,7 +3,7 @@ import inquirer from "inquirer"
 import { execSync } from "child_process"
 import fs from "fs"
 import path from "path"
-import { writeConfig, findWhycodeDir } from "../../utils/config.js"
+import { writeConfig, findOversightDir } from "../../utils/config.js"
 import { initDb } from "../../db/schema.js"
 import { logger } from "../../utils/logger.js"
 
@@ -18,18 +18,18 @@ function getGitAuthor(): string {
 export function registerInit(program: Command): void {
   program
     .command("init")
-    .description("Initialize WhyCode in the current repository")
+    .description("Initialize Oversight in the current repository")
     .action(async () => {
       const cwd = process.cwd()
-      const existing = findWhycodeDir(cwd)
-      const isReinit = existing === path.join(cwd, ".whycode")
+      const existing = findOversightDir(cwd)
+      const isReinit = existing === path.join(cwd, ".oversight")
 
       if (isReinit) {
         const { confirm } = await inquirer.prompt([
           {
             type: "confirm",
             name: "confirm",
-            message: "WhyCode is already initialized. Reinitialize?",
+            message: "Oversight is already initialized. Reinitialize?",
             default: false,
           },
         ])
@@ -50,8 +50,8 @@ export function registerInit(program: Command): void {
         },
       ])
 
-      const whycodeDir = path.join(cwd, ".whycode")
-      fs.mkdirSync(whycodeDir, { recursive: true })
+      const oversightDir = path.join(cwd, ".oversight")
+      fs.mkdirSync(oversightDir, { recursive: true })
 
       writeConfig(
         {
@@ -63,21 +63,21 @@ export function registerInit(program: Command): void {
         cwd
       )
 
-      initDb(whycodeDir)
+      initDb(oversightDir)
 
       fs.writeFileSync(
-        path.join(whycodeDir, ".gitignore"),
+        path.join(oversightDir, ".gitignore"),
         "decisions.db-journal\ndecisions.db-shm\ndecisions.db-wal\n",
         "utf-8"
       )
 
-      logger.success("WhyCode initialized successfully!")
+      logger.success("Oversight initialized successfully!")
       console.log("")
       logger.info("Next steps:")
-      console.log("  • whycode capture          — record a decision")
-      console.log("  • whycode list             — view all decisions")
-      console.log("  • whycode check <path>     — check decisions for a file")
-      console.log("  • whycode hooks install    — enable git post-commit reminders")
+      console.log("  • oversight capture          — record a decision")
+      console.log("  • oversight list             — view all decisions")
+      console.log("  • oversight check <path>     — check decisions for a file")
+      console.log("  • oversight hooks install    — enable git post-commit reminders")
       console.log("")
     })
 }

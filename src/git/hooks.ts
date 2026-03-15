@@ -5,7 +5,7 @@ const WHYCODE_MARKER = "# WHYCODE_HOOK"
 
 const HOOK_CONTENT = `#!/bin/sh
 ${WHYCODE_MARKER}
-# This hook was installed by WhyCode. Run "whycode hooks uninstall" to remove it.
+# This hook was installed by Oversight. Run "oversight hooks uninstall" to remove it.
 
 CHANGED=$(git diff --name-only HEAD^ HEAD 2>/dev/null || git diff --name-only HEAD 2>/dev/null || echo "")
 
@@ -14,8 +14,8 @@ if [ -z "$CHANGED" ]; then
 fi
 
 echo ""
-echo "WhyCode: You modified files with recorded decisions."
-echo "Run 'whycode check <path>' to review before your next change."
+echo "Oversight: You modified files with recorded decisions."
+echo "Run 'oversight check <path>' to review before your next change."
 echo ""
 echo "Modified files:"
 echo "$CHANGED" | while read -r file; do

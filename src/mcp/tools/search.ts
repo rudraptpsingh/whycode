@@ -1,9 +1,9 @@
 import Database from "better-sqlite3"
 import { searchDecisions } from "../../db/search.js"
-import type { WhyCodeRecord, DecisionType } from "../../types/index.js"
+import type { OversightRecord, DecisionType } from "../../types/index.js"
 
 export const searchTool = {
-  name: "whycode_search",
+  name: "oversight_search",
   description:
     "Semantic full-text search over all decision records. Use when you need context about a topic before making changes.",
   inputSchema: {
@@ -21,7 +21,7 @@ export const searchTool = {
 export function handleSearch(
   db: Database.Database,
   input: { query: string; tags?: string[]; decisionTypes?: string[]; limit?: number }
-): WhyCodeRecord[] {
+): OversightRecord[] {
   return searchDecisions(db, {
     query: input.query,
     tags: input.tags,

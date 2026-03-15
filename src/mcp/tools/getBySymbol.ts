@@ -1,9 +1,9 @@
 import Database from "better-sqlite3"
 import { getAllDecisions } from "../../db/decisions.js"
-import type { WhyCodeRecord } from "../../types/index.js"
+import type { OversightRecord } from "../../types/index.js"
 
 export const getBySymbolTool = {
-  name: "whycode_get_by_symbol",
+  name: "oversight_get_by_symbol",
   description:
     "Retrieve decisions for a specific function, class, or symbol. Use when refactoring or renaming a named code element.",
   inputSchema: {
@@ -19,7 +19,7 @@ export const getBySymbolTool = {
 export function handleGetBySymbol(
   db: Database.Database,
   input: { symbol: string; path?: string }
-): WhyCodeRecord[] {
+): OversightRecord[] {
   const all = getAllDecisions(db)
   const symbolLower = input.symbol.toLowerCase()
 

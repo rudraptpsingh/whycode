@@ -17,7 +17,7 @@ const pkg = require("../../package.json") as { version: string; description: str
 const program = new Command()
 
 program
-  .name("whycode")
+  .name("oversight")
   .description(pkg.description)
   .version(pkg.version)
 

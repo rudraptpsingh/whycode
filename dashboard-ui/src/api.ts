@@ -1,4 +1,4 @@
-import type { WhyCodeRecord, WhyCodeMetrics, DecisionStatus, DecisionType } from "./types"
+import type { OversightRecord, OversightMetrics, DecisionStatus, DecisionType } from "./types"
 
 const BASE = "/api"
 
@@ -8,7 +8,7 @@ export async function fetchDecisions(opts?: {
   tags?: string[]
   types?: DecisionType[]
   limit?: number
-}): Promise<WhyCodeRecord[]> {
+}): Promise<OversightRecord[]> {
   const params = new URLSearchParams()
   if (opts?.status) params.set("status", opts.status)
   if (opts?.q) params.set("q", opts.q)
@@ -21,13 +21,13 @@ export async function fetchDecisions(opts?: {
   return res.json()
 }
 
-export async function fetchDecision(id: string): Promise<WhyCodeRecord> {
+export async function fetchDecision(id: string): Promise<OversightRecord> {
   const res = await fetch(`${BASE}/decisions/${id}`)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
 }
 
-export async function updateDecisionStatus(id: string, status: DecisionStatus): Promise<WhyCodeRecord> {
+export async function updateDecisionStatus(id: string, status: DecisionStatus): Promise<OversightRecord> {
   const res = await fetch(`${BASE}/decisions/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
@@ -42,13 +42,13 @@ export async function deleteDecision(id: string): Promise<void> {
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
 }
 
-export async function fetchMetrics(): Promise<WhyCodeMetrics> {
+export async function fetchMetrics(): Promise<OversightMetrics> {
   const res = await fetch(`${BASE}/metrics`)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
 }
 
-export async function searchDecisions(q: string, limit = 20): Promise<WhyCodeRecord[]> {
+export async function searchDecisions(q: string, limit = 20): Promise<OversightRecord[]> {
   const params = new URLSearchParams({ q, limit: String(limit) })
   const res = await fetch(`${BASE}/search?${params}`)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
