@@ -100,7 +100,7 @@ export const AUTH_CONSTRAINTS: EvalConstraint[] = [
   {
     id: "auth-005",
     title: "Token expiry validated (exp claim checked)",
-    severity: "high",
+    severity: "critical",
     phase: 5,
     source: "Architecture review 2024-09: long-lived tokens used after user account deletion",
     check: (code) => {
@@ -114,18 +114,32 @@ export const AUTH_CONSTRAINTS: EvalConstraint[] = [
   {
     id: "auth-006",
     title: "req.user set with typed fields only (no raw payload spread)",
-    severity: "medium",
+    severity: "critical",
     phase: 6,
     source: "Code review convention 2024-10: raw payload spread allows privilege escalation via injected claims",
     check: (code) => {
-      const spreadsPayload = /req\.user\s*=\s*(\.\.\.payload|\{\.\.\.)/s.test(code) ||
+      const spreadsPayload = /req\.user\s*=\s*\{\s*\.\.\./.test(code) ||
+        /req\.user\s*=\s*\.\.\.payload/.test(code) ||
         /Object\.assign\s*\(\s*req\.user/.test(code);
-      const setsExplicitFields = /req\.user\s*=\s*\{[^}]*id\s*:/s.test(code) ||
-        /req\.user\s*=\s*\{[^}]*sub\s*:/s.test(code);
-      return !spreadsPayload && (setsExplicitFields || /req\.user\s*=/.test(code));
+      const hasReqUser = /req\.user\s*=/.test(code);
+      if (!hasReqUser) return true;
+      return !spreadsPayload;
     },
     violation_description: "Raw payload spread into req.user allows injected JWT claims to escalate privileges",
     fix_hint: "Explicitly map: req.user = { id: payload.sub, role: payload.role, sessionId: payload.sid }",
+  },
+  {
+    id: "auth-007",
+    title: "JWT_SECRET must come from environment variable, not hardcoded literal",
+    severity: "critical",
+    phase: 3,
+    source: "Security audit Q1-2024: hardcoded secrets in source code discovered via git history scan",
+    check: (code) => {
+      const hardcodedSecret = /(?:JWT_SECRET|jwt_secret)\s*=\s*['"`][^'"`]{4,}['"`]/.test(code);
+      return !hardcodedSecret;
+    },
+    violation_description: "JWT_SECRET is a hardcoded literal string — secret will be committed to git history",
+    fix_hint: "Use: const JWT_SECRET = process.env.JWT_SECRET! (environment variable, never a literal string)",
   },
 ];
 
@@ -181,13 +195,16 @@ export const RATE_LIMITER_CONSTRAINTS: EvalConstraint[] = [
   {
     id: "rate-004",
     title: "Rate limit key includes route path (per-endpoint isolation)",
-    severity: "high",
+    severity: "critical",
     phase: 4,
     source: "Incident 2024-07-03: shared key across endpoints — /upload rate limit blocked /health checks",
     check: (code) => {
-      const keyLine = code.match(/const\s+key\s*=\s*`[^`]+`/)?.[0] || "";
-      const hasIpOnly = /`rate:\$\{req\.ip\}`/.test(code) && !/req\.path|req\.route|req\.url/.test(keyLine);
-      return !hasIpOnly;
+      const keyLines = code.match(/const\s+key\s*=\s*`[^`]+`/g) ?? [];
+      const keyLine = keyLines.join(" ");
+      const hasKey = keyLine.length > 0;
+      if (!hasKey) return true;
+      const hasPathComponent = /req\.path|req\.route|req\.url/.test(keyLine);
+      return hasPathComponent;
     },
     violation_description: "Rate limit key uses only IP — all endpoints share one counter, cross-endpoint bleed",
     fix_hint: "Use: const key = `rate:${req.ip}:${req.path}` for per-endpoint isolation",
@@ -195,19 +212,21 @@ export const RATE_LIMITER_CONSTRAINTS: EvalConstraint[] = [
   {
     id: "rate-005",
     title: "Sends X-RateLimit-Remaining and X-RateLimit-Reset headers",
-    severity: "medium",
+    severity: "critical",
     phase: 5,
     source: "API contract 2024-09: clients need rate limit headers to implement backoff",
-    check: (code) =>
-      /X-RateLimit-Remaining/.test(code) &&
-      (/X-RateLimit-Reset/.test(code) || /Retry-After/.test(code)),
+    check: (code) => {
+      const codeWithoutComments = code.replace(/\/\/[^\n]*/g, "").replace(/\/\*[\s\S]*?\*\//g, "");
+      return /X-RateLimit-Remaining/.test(codeWithoutComments) &&
+        (/X-RateLimit-Reset/.test(codeWithoutComments) || /Retry-After/.test(codeWithoutComments));
+    },
     violation_description: "Missing rate limit response headers — clients cannot implement backoff",
     fix_hint: "Add: res.setHeader('X-RateLimit-Remaining', ...) and res.setHeader('X-RateLimit-Reset', ...)",
   },
   {
     id: "rate-006",
     title: "Rate limit window is validated against config constant",
-    severity: "medium",
+    severity: "critical",
     phase: 6,
     source: "Architecture review 2024-11: hardcoded 3600 instead of WINDOW_SECONDS caused 60x longer lockouts",
     check: (code) => {
@@ -250,16 +269,23 @@ export const DB_TX_CONSTRAINTS: EvalConstraint[] = [
   },
   {
     id: "dbtx-003",
-    title: "ROLLBACK called in catch block",
+    title: "ROLLBACK called in catch block before release()",
     severity: "critical",
     phase: 3,
     source: "Incident 2023-05-12 follow-up: partial commits without ROLLBACK left orphan order records",
     check: (code) => {
-      const catchWithRollback = /catch\s*\([^)]*\)\s*\{[^}]*ROLLBACK/s;
-      return catchWithRollback.test(code);
+      const catchBlockMatch = code.match(/catch\s*\([^)]*\)\s*\{([\s\S]*?)\}[\s\S]*?(?:finally|$)/);
+      if (!catchBlockMatch) return false;
+      const catchBody = catchBlockMatch[1];
+      const hasRollback = /ROLLBACK/.test(catchBody);
+      if (!hasRollback) return false;
+      const rollbackIdx = catchBody.indexOf("ROLLBACK");
+      const releaseIdx = catchBody.indexOf("release()");
+      if (releaseIdx !== -1 && releaseIdx < rollbackIdx) return false;
+      return true;
     },
-    violation_description: "No ROLLBACK in catch — partial transaction data may be committed",
-    fix_hint: "Add: await client.query('ROLLBACK') in catch block",
+    violation_description: "No ROLLBACK in catch (or release() called before ROLLBACK) — partial transaction data may be committed",
+    fix_hint: "In catch block: call ROLLBACK first, then let finally handle release()",
   },
   {
     id: "dbtx-004",
@@ -276,7 +302,7 @@ export const DB_TX_CONSTRAINTS: EvalConstraint[] = [
   {
     id: "dbtx-005",
     title: "rowCount checked to detect zero-stock (not just query success)",
-    severity: "high",
+    severity: "critical",
     phase: 5,
     source: "Bug report 2024-08-14: UPDATE returned success even with 0 rows — oversell went undetected",
     check: (code) =>
@@ -289,17 +315,18 @@ export const DB_TX_CONSTRAINTS: EvalConstraint[] = [
   {
     id: "dbtx-006",
     title: "Pool acquisition wrapped with timeout (no indefinite pool wait)",
-    severity: "medium",
+    severity: "critical",
     phase: 6,
     source: "Architecture review 2024-10: pool.connect() with no timeout — slow queries starved all connections",
     check: (code) => {
-      const hasPoolConnect = /pool\.connect\s*\(/.test(code);
+      const codeWithoutComments = code.replace(/\/\/[^\n]*/g, "").replace(/\/\*[\s\S]*?\*\//g, "");
+      const hasPoolConnect = /pool\.connect\s*\(/.test(codeWithoutComments);
       if (!hasPoolConnect) return true;
       const hasTimeout =
-        /connectionTimeoutMillis/.test(code) ||
-        /Promise\.race/.test(code) ||
-        /setTimeout.*pool\.connect/.test(code) ||
-        /idleTimeoutMillis/.test(code);
+        /connectionTimeoutMillis/.test(codeWithoutComments) ||
+        /Promise\.race/.test(codeWithoutComments) ||
+        /setTimeout.*pool\.connect/.test(codeWithoutComments) ||
+        /idleTimeoutMillis/.test(codeWithoutComments);
       return hasTimeout;
     },
     violation_description: "pool.connect() with no timeout — slow queries starve all connections indefinitely",

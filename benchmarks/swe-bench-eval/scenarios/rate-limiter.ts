@@ -156,7 +156,7 @@ const WINDOW_SECONDS = 60;
 const MAX_REQUESTS = 100;
 
 export async function rateLimiter(req: Request, res: Response, next: NextFunction) {
-  const key = \`rate:\${req.ip}\`;
+  const key = \`rate:\${req.ip}:\${req.path}\`;
 
   try {
     // Atomic INCR + conditional TTL (correct pattern)
@@ -168,8 +168,10 @@ export async function rateLimiter(req: Request, res: Response, next: NextFunctio
 
     res.setHeader('X-RateLimit-Limit', MAX_REQUESTS);
     res.setHeader('X-RateLimit-Remaining', Math.max(0, MAX_REQUESTS - current));
+    res.setHeader('X-RateLimit-Reset', WINDOW_SECONDS);
 
     if (current > MAX_REQUESTS) {
+      res.setHeader('Retry-After', WINDOW_SECONDS);
       return res.status(429).json({
         error: 'Too many requests',
         retryAfter: WINDOW_SECONDS,

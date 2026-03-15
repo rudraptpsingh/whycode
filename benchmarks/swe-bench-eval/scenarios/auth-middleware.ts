@@ -362,6 +362,44 @@ export function requireAuth(req: AuthenticatedRequest, res: Response, next: Next
 }
 `;
 
+// Mutation H: hardcoded JWT_SECRET literal (secret committed to git history)
+export const MUTATION_H = `
+import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+
+// "Convenient for local dev" - hardcoded secret instead of env var
+const JWT_SECRET = 'dev-secret-key-change-in-prod';
+
+export interface AuthenticatedRequest extends Request {
+  user?: {
+    id: string;
+    role: string;
+    sessionId: string;
+  };
+}
+
+export function requireAuth(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Missing authorization header' });
+  }
+
+  const token = authHeader.slice(7);
+
+  try {
+    const payload = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] }) as any;
+    req.user = {
+      id: payload.sub,
+      role: payload.role,
+      sessionId: payload.sid,
+    };
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+}
+`;
+
 /**
  * The 6 phases of constraint documentation, built incrementally.
  * Each phase = one new constraint added after a real incident/audit.

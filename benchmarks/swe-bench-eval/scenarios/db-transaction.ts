@@ -205,11 +205,14 @@ export async function createOrder(
 }
 `;
 
-// Mutation D: Correct - proper transaction with rollback, release in finally, inventory check
+// Mutation D: Correct - proper transaction with rollback, release in finally, inventory check, pool timeout
 export const MUTATION_D = `
 import { Pool, PoolClient } from 'pg';
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  connectionTimeoutMillis: 5000,
+});
 
 export interface OrderItem {
   productId: string;

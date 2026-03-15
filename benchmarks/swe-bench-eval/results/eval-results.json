@@ -1,8 +1,12 @@
 {
-  "run_date": "2026-03-15T08:51:37.145Z",
+  "run_date": "2026-03-15T09:35:50.065Z",
   "phases": 6,
-  "mutations_per_scenario": 7,
-  "constraints_per_scenario": 6,
+  "mutations_auth": 8,
+  "mutations_rate": 7,
+  "mutations_dbtx": 7,
+  "constraints_auth": 7,
+  "constraints_rate": 6,
+  "constraints_dbtx": 6,
   "scenarios": [
     {
       "scenario_id": "auth",
@@ -86,6 +90,18 @@
               "critical_violations": 0
             },
             {
+              "mutation_id": "H",
+              "mutation_label": "Mutation H — hardcoded JWT_SECRET literal",
+              "phase": 1,
+              "constraints_total": 0,
+              "constraints_passed": 0,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            },
+            {
               "mutation_id": "D",
               "mutation_label": "Mutation D — correct implementation",
               "phase": 1,
@@ -98,8 +114,8 @@
               "critical_violations": 0
             }
           ],
-          "safe_merges": 7,
-          "total_mutations": 7,
+          "safe_merges": 8,
+          "total_mutations": 8,
           "avg_compliance": 100
         },
         {
@@ -186,6 +202,18 @@
               "critical_violations": 0
             },
             {
+              "mutation_id": "H",
+              "mutation_label": "Mutation H — hardcoded JWT_SECRET literal",
+              "phase": 2,
+              "constraints_total": 1,
+              "constraints_passed": 1,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
+              "would_merge": true,
+              "critical_violations": 0
+            },
+            {
               "mutation_id": "D",
               "mutation_label": "Mutation D — correct implementation",
               "phase": 2,
@@ -198,21 +226,21 @@
               "critical_violations": 0
             }
           ],
-          "safe_merges": 6,
-          "total_mutations": 7,
-          "avg_compliance": 86
+          "safe_merges": 7,
+          "total_mutations": 8,
+          "avg_compliance": 88
         },
         {
           "phase": 3,
-          "phase_label": "Phase 3 — +Constraints: auth-002, auth-003",
+          "phase_label": "Phase 3 — +Constraints: auth-002, auth-003, auth-007",
           "records_loaded": 2,
           "mutation_results": [
             {
               "mutation_id": "B",
               "mutation_label": "Mutation B — uses jwt.decode()",
               "phase": 3,
-              "constraints_total": 3,
-              "constraints_passed": 2,
+              "constraints_total": 4,
+              "constraints_passed": 3,
               "constraints_failed": 1,
               "violations": [
                 {
@@ -221,7 +249,7 @@
                   "severity": "critical"
                 }
               ],
-              "compliance_pct": 67,
+              "compliance_pct": 75,
               "would_merge": false,
               "critical_violations": 1
             },
@@ -229,8 +257,8 @@
               "mutation_id": "A",
               "mutation_label": "Mutation A — accepts req.query token",
               "phase": 3,
-              "constraints_total": 3,
-              "constraints_passed": 2,
+              "constraints_total": 4,
+              "constraints_passed": 3,
               "constraints_failed": 1,
               "violations": [
                 {
@@ -239,7 +267,7 @@
                   "severity": "critical"
                 }
               ],
-              "compliance_pct": 67,
+              "compliance_pct": 75,
               "would_merge": false,
               "critical_violations": 1
             },
@@ -247,8 +275,8 @@
               "mutation_id": "C",
               "mutation_label": "Mutation C — calls next() on failure",
               "phase": 3,
-              "constraints_total": 3,
-              "constraints_passed": 2,
+              "constraints_total": 4,
+              "constraints_passed": 3,
               "constraints_failed": 1,
               "violations": [
                 {
@@ -257,7 +285,7 @@
                   "severity": "critical"
                 }
               ],
-              "compliance_pct": 67,
+              "compliance_pct": 75,
               "would_merge": false,
               "critical_violations": 1
             },
@@ -265,8 +293,8 @@
               "mutation_id": "E",
               "mutation_label": "Mutation E — no algorithms option (alg:none)",
               "phase": 3,
-              "constraints_total": 3,
-              "constraints_passed": 3,
+              "constraints_total": 4,
+              "constraints_passed": 4,
               "constraints_failed": 0,
               "violations": [],
               "compliance_pct": 100,
@@ -277,8 +305,8 @@
               "mutation_id": "F",
               "mutation_label": "Mutation F — ignoreExpiration:true",
               "phase": 3,
-              "constraints_total": 3,
-              "constraints_passed": 3,
+              "constraints_total": 4,
+              "constraints_passed": 4,
               "constraints_failed": 0,
               "violations": [],
               "compliance_pct": 100,
@@ -289,8 +317,8 @@
               "mutation_id": "G",
               "mutation_label": "Mutation G — raw payload spread to req.user",
               "phase": 3,
-              "constraints_total": 3,
-              "constraints_passed": 3,
+              "constraints_total": 4,
+              "constraints_passed": 4,
               "constraints_failed": 0,
               "violations": [],
               "compliance_pct": 100,
@@ -298,11 +326,29 @@
               "critical_violations": 0
             },
             {
+              "mutation_id": "H",
+              "mutation_label": "Mutation H — hardcoded JWT_SECRET literal",
+              "phase": 3,
+              "constraints_total": 4,
+              "constraints_passed": 3,
+              "constraints_failed": 1,
+              "violations": [
+                {
+                  "id": "auth-007",
+                  "title": "JWT_SECRET must come from environment variable, not hardcoded literal",
+                  "severity": "critical"
+                }
+              ],
+              "compliance_pct": 75,
+              "would_merge": false,
+              "critical_violations": 1
+            },
+            {
               "mutation_id": "D",
               "mutation_label": "Mutation D — correct implementation",
               "phase": 3,
-              "constraints_total": 3,
-              "constraints_passed": 3,
+              "constraints_total": 4,
+              "constraints_passed": 4,
               "constraints_failed": 0,
               "violations": [],
               "compliance_pct": 100,
@@ -311,8 +357,8 @@
             }
           ],
           "safe_merges": 4,
-          "total_mutations": 7,
-          "avg_compliance": 86
+          "total_mutations": 8,
+          "avg_compliance": 88
         },
         {
           "phase": 4,
@@ -323,8 +369,8 @@
               "mutation_id": "B",
               "mutation_label": "Mutation B — uses jwt.decode()",
               "phase": 4,
-              "constraints_total": 4,
-              "constraints_passed": 3,
+              "constraints_total": 5,
+              "constraints_passed": 4,
               "constraints_failed": 1,
               "violations": [
                 {
@@ -333,7 +379,7 @@
                   "severity": "critical"
                 }
               ],
-              "compliance_pct": 75,
+              "compliance_pct": 80,
               "would_merge": false,
               "critical_violations": 1
             },
@@ -341,8 +387,8 @@
               "mutation_id": "A",
               "mutation_label": "Mutation A — accepts req.query token",
               "phase": 4,
-              "constraints_total": 4,
-              "constraints_passed": 2,
+              "constraints_total": 5,
+              "constraints_passed": 3,
               "constraints_failed": 2,
               "violations": [
                 {
@@ -356,7 +402,7 @@
                   "severity": "critical"
                 }
               ],
-              "compliance_pct": 50,
+              "compliance_pct": 60,
               "would_merge": false,
               "critical_violations": 2
             },
@@ -364,8 +410,8 @@
               "mutation_id": "C",
               "mutation_label": "Mutation C — calls next() on failure",
               "phase": 4,
-              "constraints_total": 4,
-              "constraints_passed": 2,
+              "constraints_total": 5,
+              "constraints_passed": 3,
               "constraints_failed": 2,
               "violations": [
                 {
@@ -379,7 +425,7 @@
                   "severity": "critical"
                 }
               ],
-              "compliance_pct": 50,
+              "compliance_pct": 60,
               "would_merge": false,
               "critical_violations": 2
             },
@@ -387,8 +433,8 @@
               "mutation_id": "E",
               "mutation_label": "Mutation E — no algorithms option (alg:none)",
               "phase": 4,
-              "constraints_total": 4,
-              "constraints_passed": 3,
+              "constraints_total": 5,
+              "constraints_passed": 4,
               "constraints_failed": 1,
               "violations": [
                 {
@@ -397,7 +443,7 @@
                   "severity": "critical"
                 }
               ],
-              "compliance_pct": 75,
+              "compliance_pct": 80,
               "would_merge": false,
               "critical_violations": 1
             },
@@ -405,8 +451,8 @@
               "mutation_id": "F",
               "mutation_label": "Mutation F — ignoreExpiration:true",
               "phase": 4,
-              "constraints_total": 4,
-              "constraints_passed": 4,
+              "constraints_total": 5,
+              "constraints_passed": 5,
               "constraints_failed": 0,
               "violations": [],
               "compliance_pct": 100,
@@ -417,8 +463,8 @@
               "mutation_id": "G",
               "mutation_label": "Mutation G — raw payload spread to req.user",
               "phase": 4,
-              "constraints_total": 4,
-              "constraints_passed": 4,
+              "constraints_total": 5,
+              "constraints_passed": 5,
               "constraints_failed": 0,
               "violations": [],
               "compliance_pct": 100,
@@ -426,11 +472,29 @@
               "critical_violations": 0
             },
             {
+              "mutation_id": "H",
+              "mutation_label": "Mutation H — hardcoded JWT_SECRET literal",
+              "phase": 4,
+              "constraints_total": 5,
+              "constraints_passed": 4,
+              "constraints_failed": 1,
+              "violations": [
+                {
+                  "id": "auth-007",
+                  "title": "JWT_SECRET must come from environment variable, not hardcoded literal",
+                  "severity": "critical"
+                }
+              ],
+              "compliance_pct": 80,
+              "would_merge": false,
+              "critical_violations": 1
+            },
+            {
               "mutation_id": "D",
               "mutation_label": "Mutation D — correct implementation",
               "phase": 4,
-              "constraints_total": 4,
-              "constraints_passed": 4,
+              "constraints_total": 5,
+              "constraints_passed": 5,
               "constraints_failed": 0,
               "violations": [],
               "compliance_pct": 100,
@@ -439,8 +503,8 @@
             }
           ],
           "safe_merges": 3,
-          "total_mutations": 7,
-          "avg_compliance": 79
+          "total_mutations": 8,
+          "avg_compliance": 83
         },
         {
           "phase": 5,
@@ -451,8 +515,8 @@
               "mutation_id": "B",
               "mutation_label": "Mutation B — uses jwt.decode()",
               "phase": 5,
-              "constraints_total": 5,
-              "constraints_passed": 3,
+              "constraints_total": 6,
+              "constraints_passed": 4,
               "constraints_failed": 2,
               "violations": [
                 {
@@ -463,19 +527,19 @@
                 {
                   "id": "auth-005",
                   "title": "Token expiry validated (exp claim checked)",
-                  "severity": "high"
+                  "severity": "critical"
                 }
               ],
-              "compliance_pct": 60,
+              "compliance_pct": 67,
               "would_merge": false,
-              "critical_violations": 1
+              "critical_violations": 2
             },
             {
               "mutation_id": "A",
               "mutation_label": "Mutation A — accepts req.query token",
               "phase": 5,
-              "constraints_total": 5,
-              "constraints_passed": 3,
+              "constraints_total": 6,
+              "constraints_passed": 4,
               "constraints_failed": 2,
               "violations": [
                 {
@@ -489,7 +553,7 @@
                   "severity": "critical"
                 }
               ],
-              "compliance_pct": 60,
+              "compliance_pct": 67,
               "would_merge": false,
               "critical_violations": 2
             },
@@ -497,8 +561,8 @@
               "mutation_id": "C",
               "mutation_label": "Mutation C — calls next() on failure",
               "phase": 5,
-              "constraints_total": 5,
-              "constraints_passed": 3,
+              "constraints_total": 6,
+              "constraints_passed": 4,
               "constraints_failed": 2,
               "violations": [
                 {
@@ -512,7 +576,7 @@
                   "severity": "critical"
                 }
               ],
-              "compliance_pct": 60,
+              "compliance_pct": 67,
               "would_merge": false,
               "critical_violations": 2
             },
@@ -520,8 +584,8 @@
               "mutation_id": "E",
               "mutation_label": "Mutation E — no algorithms option (alg:none)",
               "phase": 5,
-              "constraints_total": 5,
-              "constraints_passed": 4,
+              "constraints_total": 6,
+              "constraints_passed": 5,
               "constraints_failed": 1,
               "violations": [
                 {
@@ -530,7 +594,7 @@
                   "severity": "critical"
                 }
               ],
-              "compliance_pct": 80,
+              "compliance_pct": 83,
               "would_merge": false,
               "critical_violations": 1
             },
@@ -538,26 +602,26 @@
               "mutation_id": "F",
               "mutation_label": "Mutation F — ignoreExpiration:true",
               "phase": 5,
-              "constraints_total": 5,
-              "constraints_passed": 4,
+              "constraints_total": 6,
+              "constraints_passed": 5,
               "constraints_failed": 1,
               "violations": [
                 {
                   "id": "auth-005",
                   "title": "Token expiry validated (exp claim checked)",
-                  "severity": "high"
+                  "severity": "critical"
                 }
               ],
-              "compliance_pct": 80,
-              "would_merge": true,
-              "critical_violations": 0
+              "compliance_pct": 83,
+              "would_merge": false,
+              "critical_violations": 1
             },
             {
               "mutation_id": "G",
               "mutation_label": "Mutation G — raw payload spread to req.user",
               "phase": 5,
-              "constraints_total": 5,
-              "constraints_passed": 5,
+              "constraints_total": 6,
+              "constraints_passed": 6,
               "constraints_failed": 0,
               "violations": [],
               "compliance_pct": 100,
@@ -565,11 +629,29 @@
               "critical_violations": 0
             },
             {
+              "mutation_id": "H",
+              "mutation_label": "Mutation H — hardcoded JWT_SECRET literal",
+              "phase": 5,
+              "constraints_total": 6,
+              "constraints_passed": 5,
+              "constraints_failed": 1,
+              "violations": [
+                {
+                  "id": "auth-007",
+                  "title": "JWT_SECRET must come from environment variable, not hardcoded literal",
+                  "severity": "critical"
+                }
+              ],
+              "compliance_pct": 83,
+              "would_merge": false,
+              "critical_violations": 1
+            },
+            {
               "mutation_id": "D",
               "mutation_label": "Mutation D — correct implementation",
               "phase": 5,
-              "constraints_total": 5,
-              "constraints_passed": 5,
+              "constraints_total": 6,
+              "constraints_passed": 6,
               "constraints_failed": 0,
               "violations": [],
               "compliance_pct": 100,
@@ -577,9 +659,9 @@
               "critical_violations": 0
             }
           ],
-          "safe_merges": 3,
-          "total_mutations": 7,
-          "avg_compliance": 77
+          "safe_merges": 2,
+          "total_mutations": 8,
+          "avg_compliance": 81
         },
         {
           "phase": 6,
@@ -590,8 +672,8 @@
               "mutation_id": "B",
               "mutation_label": "Mutation B — uses jwt.decode()",
               "phase": 6,
-              "constraints_total": 6,
-              "constraints_passed": 4,
+              "constraints_total": 7,
+              "constraints_passed": 5,
               "constraints_failed": 2,
               "violations": [
                 {
@@ -602,19 +684,19 @@
                 {
                   "id": "auth-005",
                   "title": "Token expiry validated (exp claim checked)",
-                  "severity": "high"
+                  "severity": "critical"
                 }
               ],
-              "compliance_pct": 67,
+              "compliance_pct": 71,
               "would_merge": false,
-              "critical_violations": 1
+              "critical_violations": 2
             },
             {
               "mutation_id": "A",
               "mutation_label": "Mutation A — accepts req.query token",
               "phase": 6,
-              "constraints_total": 6,
-              "constraints_passed": 4,
+              "constraints_total": 7,
+              "constraints_passed": 5,
               "constraints_failed": 2,
               "violations": [
                 {
@@ -628,7 +710,7 @@
                   "severity": "critical"
                 }
               ],
-              "compliance_pct": 67,
+              "compliance_pct": 71,
               "would_merge": false,
               "critical_violations": 2
             },
@@ -636,8 +718,8 @@
               "mutation_id": "C",
               "mutation_label": "Mutation C — calls next() on failure",
               "phase": 6,
-              "constraints_total": 6,
-              "constraints_passed": 4,
+              "constraints_total": 7,
+              "constraints_passed": 5,
               "constraints_failed": 2,
               "violations": [
                 {
@@ -651,7 +733,7 @@
                   "severity": "critical"
                 }
               ],
-              "compliance_pct": 67,
+              "compliance_pct": 71,
               "would_merge": false,
               "critical_violations": 2
             },
@@ -659,8 +741,8 @@
               "mutation_id": "E",
               "mutation_label": "Mutation E — no algorithms option (alg:none)",
               "phase": 6,
-              "constraints_total": 6,
-              "constraints_passed": 5,
+              "constraints_total": 7,
+              "constraints_passed": 6,
               "constraints_failed": 1,
               "violations": [
                 {
@@ -669,7 +751,7 @@
                   "severity": "critical"
                 }
               ],
-              "compliance_pct": 83,
+              "compliance_pct": 86,
               "would_merge": false,
               "critical_violations": 1
             },
@@ -677,38 +759,62 @@
               "mutation_id": "F",
               "mutation_label": "Mutation F — ignoreExpiration:true",
               "phase": 6,
-              "constraints_total": 6,
-              "constraints_passed": 5,
+              "constraints_total": 7,
+              "constraints_passed": 6,
               "constraints_failed": 1,
               "violations": [
                 {
                   "id": "auth-005",
                   "title": "Token expiry validated (exp claim checked)",
-                  "severity": "high"
+                  "severity": "critical"
                 }
               ],
-              "compliance_pct": 83,
-              "would_merge": true,
-              "critical_violations": 0
+              "compliance_pct": 86,
+              "would_merge": false,
+              "critical_violations": 1
             },
             {
               "mutation_id": "G",
               "mutation_label": "Mutation G — raw payload spread to req.user",
               "phase": 6,
-              "constraints_total": 6,
+              "constraints_total": 7,
               "constraints_passed": 6,
-              "constraints_failed": 0,
-              "violations": [],
-              "compliance_pct": 100,
-              "would_merge": true,
-              "critical_violations": 0
+              "constraints_failed": 1,
+              "violations": [
+                {
+                  "id": "auth-006",
+                  "title": "req.user set with typed fields only (no raw payload spread)",
+                  "severity": "critical"
+                }
+              ],
+              "compliance_pct": 86,
+              "would_merge": false,
+              "critical_violations": 1
+            },
+            {
+              "mutation_id": "H",
+              "mutation_label": "Mutation H — hardcoded JWT_SECRET literal",
+              "phase": 6,
+              "constraints_total": 7,
+              "constraints_passed": 6,
+              "constraints_failed": 1,
+              "violations": [
+                {
+                  "id": "auth-007",
+                  "title": "JWT_SECRET must come from environment variable, not hardcoded literal",
+                  "severity": "critical"
+                }
+              ],
+              "compliance_pct": 86,
+              "would_merge": false,
+              "critical_violations": 1
             },
             {
               "mutation_id": "D",
               "mutation_label": "Mutation D — correct implementation",
               "phase": 6,
-              "constraints_total": 6,
-              "constraints_passed": 6,
+              "constraints_total": 7,
+              "constraints_passed": 7,
               "constraints_failed": 0,
               "violations": [],
               "compliance_pct": 100,
@@ -716,14 +822,14 @@
               "critical_violations": 0
             }
           ],
-          "safe_merges": 3,
-          "total_mutations": 7,
-          "avg_compliance": 81
+          "safe_merges": 1,
+          "total_mutations": 8,
+          "avg_compliance": 82
         }
       ],
       "recording": {
         "scenario_id": "auth",
-        "records_inserted": 6,
+        "records_inserted": 7,
         "all_have_source": true,
         "all_active": true,
         "anchors_correct": true,
@@ -803,16 +909,24 @@
             "mutation_id": "F",
             "label": "Mutation F — ignoreExpiration:true",
             "without_whycode_passes": true,
-            "with_whycode_passes": true,
-            "whycode_caught_bug": false,
+            "with_whycode_passes": false,
+            "whycode_caught_bug": true,
             "is_correct": false
           },
           {
             "mutation_id": "G",
             "label": "Mutation G — raw payload spread to req.user",
             "without_whycode_passes": true,
-            "with_whycode_passes": true,
-            "whycode_caught_bug": false,
+            "with_whycode_passes": false,
+            "whycode_caught_bug": true,
+            "is_correct": false
+          },
+          {
+            "mutation_id": "H",
+            "label": "Mutation H — hardcoded JWT_SECRET literal",
+            "without_whycode_passes": true,
+            "with_whycode_passes": false,
+            "whycode_caught_bug": true,
             "is_correct": false
           },
           {
@@ -824,10 +938,10 @@
             "is_correct": true
           }
         ],
-        "bad_merges_baseline": 6,
-        "bad_merges_with_whycode": 2,
-        "bugs_caught": 4,
-        "improvement_pct": 67,
+        "bad_merges_baseline": 7,
+        "bad_merges_with_whycode": 0,
+        "bugs_caught": 7,
+        "improvement_pct": 100,
         "false_negatives": 0
       }
     },
@@ -1187,12 +1301,12 @@
                 {
                   "id": "rate-004",
                   "title": "Rate limit key includes route path (per-endpoint isolation)",
-                  "severity": "high"
+                  "severity": "critical"
                 }
               ],
               "compliance_pct": 0,
               "would_merge": false,
-              "critical_violations": 2
+              "critical_violations": 3
             },
             {
               "mutation_id": "C",
@@ -1210,12 +1324,12 @@
                 {
                   "id": "rate-004",
                   "title": "Rate limit key includes route path (per-endpoint isolation)",
-                  "severity": "high"
+                  "severity": "critical"
                 }
               ],
               "compliance_pct": 50,
               "would_merge": false,
-              "critical_violations": 1
+              "critical_violations": 2
             },
             {
               "mutation_id": "B",
@@ -1238,12 +1352,12 @@
                 {
                   "id": "rate-004",
                   "title": "Rate limit key includes route path (per-endpoint isolation)",
-                  "severity": "high"
+                  "severity": "critical"
                 }
               ],
               "compliance_pct": 25,
               "would_merge": false,
-              "critical_violations": 1
+              "critical_violations": 2
             },
             {
               "mutation_id": "E",
@@ -1256,12 +1370,12 @@
                 {
                   "id": "rate-004",
                   "title": "Rate limit key includes route path (per-endpoint isolation)",
-                  "severity": "high"
+                  "severity": "critical"
                 }
               ],
               "compliance_pct": 75,
-              "would_merge": true,
-              "critical_violations": 0
+              "would_merge": false,
+              "critical_violations": 1
             },
             {
               "mutation_id": "F",
@@ -1292,23 +1406,17 @@
               "mutation_label": "Mutation D — correct implementation",
               "phase": 4,
               "constraints_total": 4,
-              "constraints_passed": 3,
-              "constraints_failed": 1,
-              "violations": [
-                {
-                  "id": "rate-004",
-                  "title": "Rate limit key includes route path (per-endpoint isolation)",
-                  "severity": "high"
-                }
-              ],
-              "compliance_pct": 75,
+              "constraints_passed": 4,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
               "would_merge": true,
               "critical_violations": 0
             }
           ],
-          "safe_merges": 4,
+          "safe_merges": 3,
           "total_mutations": 7,
-          "avg_compliance": 61
+          "avg_compliance": 64
         },
         {
           "phase": 5,
@@ -1341,17 +1449,17 @@
                 {
                   "id": "rate-004",
                   "title": "Rate limit key includes route path (per-endpoint isolation)",
-                  "severity": "high"
+                  "severity": "critical"
                 },
                 {
                   "id": "rate-005",
                   "title": "Sends X-RateLimit-Remaining and X-RateLimit-Reset headers",
-                  "severity": "medium"
+                  "severity": "critical"
                 }
               ],
               "compliance_pct": 0,
               "would_merge": false,
-              "critical_violations": 2
+              "critical_violations": 4
             },
             {
               "mutation_id": "C",
@@ -1369,17 +1477,17 @@
                 {
                   "id": "rate-004",
                   "title": "Rate limit key includes route path (per-endpoint isolation)",
-                  "severity": "high"
+                  "severity": "critical"
                 },
                 {
                   "id": "rate-005",
                   "title": "Sends X-RateLimit-Remaining and X-RateLimit-Reset headers",
-                  "severity": "medium"
+                  "severity": "critical"
                 }
               ],
               "compliance_pct": 40,
               "would_merge": false,
-              "critical_violations": 1
+              "critical_violations": 3
             },
             {
               "mutation_id": "B",
@@ -1402,17 +1510,17 @@
                 {
                   "id": "rate-004",
                   "title": "Rate limit key includes route path (per-endpoint isolation)",
-                  "severity": "high"
+                  "severity": "critical"
                 },
                 {
                   "id": "rate-005",
                   "title": "Sends X-RateLimit-Remaining and X-RateLimit-Reset headers",
-                  "severity": "medium"
+                  "severity": "critical"
                 }
               ],
               "compliance_pct": 20,
               "would_merge": false,
-              "critical_violations": 1
+              "critical_violations": 3
             },
             {
               "mutation_id": "E",
@@ -1425,24 +1533,30 @@
                 {
                   "id": "rate-004",
                   "title": "Rate limit key includes route path (per-endpoint isolation)",
-                  "severity": "high"
+                  "severity": "critical"
                 }
               ],
               "compliance_pct": 80,
-              "would_merge": true,
-              "critical_violations": 0
+              "would_merge": false,
+              "critical_violations": 1
             },
             {
               "mutation_id": "F",
               "mutation_label": "Mutation F — missing rate limit headers",
               "phase": 5,
               "constraints_total": 5,
-              "constraints_passed": 5,
-              "constraints_failed": 0,
-              "violations": [],
-              "compliance_pct": 100,
-              "would_merge": true,
-              "critical_violations": 0
+              "constraints_passed": 4,
+              "constraints_failed": 1,
+              "violations": [
+                {
+                  "id": "rate-005",
+                  "title": "Sends X-RateLimit-Remaining and X-RateLimit-Reset headers",
+                  "severity": "critical"
+                }
+              ],
+              "compliance_pct": 80,
+              "would_merge": false,
+              "critical_violations": 1
             },
             {
               "mutation_id": "G",
@@ -1461,28 +1575,17 @@
               "mutation_label": "Mutation D — correct implementation",
               "phase": 5,
               "constraints_total": 5,
-              "constraints_passed": 3,
-              "constraints_failed": 2,
-              "violations": [
-                {
-                  "id": "rate-004",
-                  "title": "Rate limit key includes route path (per-endpoint isolation)",
-                  "severity": "high"
-                },
-                {
-                  "id": "rate-005",
-                  "title": "Sends X-RateLimit-Remaining and X-RateLimit-Reset headers",
-                  "severity": "medium"
-                }
-              ],
-              "compliance_pct": 60,
+              "constraints_passed": 5,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
               "would_merge": true,
               "critical_violations": 0
             }
           ],
-          "safe_merges": 4,
+          "safe_merges": 2,
           "total_mutations": 7,
-          "avg_compliance": 57
+          "avg_compliance": 60
         },
         {
           "phase": 6,
@@ -1515,17 +1618,17 @@
                 {
                   "id": "rate-004",
                   "title": "Rate limit key includes route path (per-endpoint isolation)",
-                  "severity": "high"
+                  "severity": "critical"
                 },
                 {
                   "id": "rate-005",
                   "title": "Sends X-RateLimit-Remaining and X-RateLimit-Reset headers",
-                  "severity": "medium"
+                  "severity": "critical"
                 }
               ],
               "compliance_pct": 17,
               "would_merge": false,
-              "critical_violations": 2
+              "critical_violations": 4
             },
             {
               "mutation_id": "C",
@@ -1543,17 +1646,17 @@
                 {
                   "id": "rate-004",
                   "title": "Rate limit key includes route path (per-endpoint isolation)",
-                  "severity": "high"
+                  "severity": "critical"
                 },
                 {
                   "id": "rate-005",
                   "title": "Sends X-RateLimit-Remaining and X-RateLimit-Reset headers",
-                  "severity": "medium"
+                  "severity": "critical"
                 }
               ],
               "compliance_pct": 50,
               "would_merge": false,
-              "critical_violations": 1
+              "critical_violations": 3
             },
             {
               "mutation_id": "B",
@@ -1576,17 +1679,17 @@
                 {
                   "id": "rate-004",
                   "title": "Rate limit key includes route path (per-endpoint isolation)",
-                  "severity": "high"
+                  "severity": "critical"
                 },
                 {
                   "id": "rate-005",
                   "title": "Sends X-RateLimit-Remaining and X-RateLimit-Reset headers",
-                  "severity": "medium"
+                  "severity": "critical"
                 }
               ],
               "compliance_pct": 33,
               "would_merge": false,
-              "critical_violations": 1
+              "critical_violations": 3
             },
             {
               "mutation_id": "E",
@@ -1599,24 +1702,30 @@
                 {
                   "id": "rate-004",
                   "title": "Rate limit key includes route path (per-endpoint isolation)",
-                  "severity": "high"
+                  "severity": "critical"
                 }
               ],
               "compliance_pct": 83,
-              "would_merge": true,
-              "critical_violations": 0
+              "would_merge": false,
+              "critical_violations": 1
             },
             {
               "mutation_id": "F",
               "mutation_label": "Mutation F — missing rate limit headers",
               "phase": 6,
               "constraints_total": 6,
-              "constraints_passed": 6,
-              "constraints_failed": 0,
-              "violations": [],
-              "compliance_pct": 100,
-              "would_merge": true,
-              "critical_violations": 0
+              "constraints_passed": 5,
+              "constraints_failed": 1,
+              "violations": [
+                {
+                  "id": "rate-005",
+                  "title": "Sends X-RateLimit-Remaining and X-RateLimit-Reset headers",
+                  "severity": "critical"
+                }
+              ],
+              "compliance_pct": 83,
+              "would_merge": false,
+              "critical_violations": 1
             },
             {
               "mutation_id": "G",
@@ -1629,40 +1738,29 @@
                 {
                   "id": "rate-006",
                   "title": "Rate limit window is validated against config constant",
-                  "severity": "medium"
+                  "severity": "critical"
                 }
               ],
               "compliance_pct": 83,
-              "would_merge": true,
-              "critical_violations": 0
+              "would_merge": false,
+              "critical_violations": 1
             },
             {
               "mutation_id": "D",
               "mutation_label": "Mutation D — correct implementation",
               "phase": 6,
               "constraints_total": 6,
-              "constraints_passed": 4,
-              "constraints_failed": 2,
-              "violations": [
-                {
-                  "id": "rate-004",
-                  "title": "Rate limit key includes route path (per-endpoint isolation)",
-                  "severity": "high"
-                },
-                {
-                  "id": "rate-005",
-                  "title": "Sends X-RateLimit-Remaining and X-RateLimit-Reset headers",
-                  "severity": "medium"
-                }
-              ],
-              "compliance_pct": 67,
+              "constraints_passed": 6,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
               "would_merge": true,
               "critical_violations": 0
             }
           ],
-          "safe_merges": 4,
+          "safe_merges": 1,
           "total_mutations": 7,
-          "avg_compliance": 62
+          "avg_compliance": 64
         }
       ],
       "recording": {
@@ -1738,24 +1836,24 @@
             "mutation_id": "E",
             "label": "Mutation E — IP-only key (cross-endpoint bleed)",
             "without_whycode_passes": true,
-            "with_whycode_passes": true,
-            "whycode_caught_bug": false,
+            "with_whycode_passes": false,
+            "whycode_caught_bug": true,
             "is_correct": false
           },
           {
             "mutation_id": "F",
             "label": "Mutation F — missing rate limit headers",
             "without_whycode_passes": true,
-            "with_whycode_passes": true,
-            "whycode_caught_bug": false,
+            "with_whycode_passes": false,
+            "whycode_caught_bug": true,
             "is_correct": false
           },
           {
             "mutation_id": "G",
             "label": "Mutation G — hardcoded TTL value",
             "without_whycode_passes": true,
-            "with_whycode_passes": true,
-            "whycode_caught_bug": false,
+            "with_whycode_passes": false,
+            "whycode_caught_bug": true,
             "is_correct": false
           },
           {
@@ -1768,9 +1866,9 @@
           }
         ],
         "bad_merges_baseline": 6,
-        "bad_merges_with_whycode": 3,
-        "bugs_caught": 3,
-        "improvement_pct": 50,
+        "bad_merges_with_whycode": 0,
+        "bugs_caught": 6,
+        "improvement_pct": 100,
         "false_negatives": 0
       }
     },
@@ -2003,7 +2101,7 @@
                 },
                 {
                   "id": "dbtx-003",
-                  "title": "ROLLBACK called in catch block",
+                  "title": "ROLLBACK called in catch block before release()",
                   "severity": "critical"
                 }
               ],
@@ -2016,8 +2114,8 @@
               "mutation_label": "Mutation B — release before ROLLBACK",
               "phase": 3,
               "constraints_total": 3,
-              "constraints_passed": 1,
-              "constraints_failed": 2,
+              "constraints_passed": 0,
+              "constraints_failed": 3,
               "violations": [
                 {
                   "id": "dbtx-001",
@@ -2028,11 +2126,16 @@
                   "id": "dbtx-002",
                   "title": "Atomic inventory check-and-decrement (WHERE quantity >= $N)",
                   "severity": "critical"
+                },
+                {
+                  "id": "dbtx-003",
+                  "title": "ROLLBACK called in catch block before release()",
+                  "severity": "critical"
                 }
               ],
-              "compliance_pct": 33,
+              "compliance_pct": 0,
               "would_merge": false,
-              "critical_violations": 2
+              "critical_violations": 3
             },
             {
               "mutation_id": "C",
@@ -2103,7 +2206,7 @@
           ],
           "safe_merges": 4,
           "total_mutations": 7,
-          "avg_compliance": 71
+          "avg_compliance": 67
         },
         {
           "phase": 4,
@@ -2130,7 +2233,7 @@
                 },
                 {
                   "id": "dbtx-003",
-                  "title": "ROLLBACK called in catch block",
+                  "title": "ROLLBACK called in catch block before release()",
                   "severity": "critical"
                 }
               ],
@@ -2143,8 +2246,8 @@
               "mutation_label": "Mutation B — release before ROLLBACK",
               "phase": 4,
               "constraints_total": 4,
-              "constraints_passed": 2,
-              "constraints_failed": 2,
+              "constraints_passed": 1,
+              "constraints_failed": 3,
               "violations": [
                 {
                   "id": "dbtx-001",
@@ -2155,11 +2258,16 @@
                   "id": "dbtx-002",
                   "title": "Atomic inventory check-and-decrement (WHERE quantity >= $N)",
                   "severity": "critical"
+                },
+                {
+                  "id": "dbtx-003",
+                  "title": "ROLLBACK called in catch block before release()",
+                  "severity": "critical"
                 }
               ],
-              "compliance_pct": 50,
+              "compliance_pct": 25,
               "would_merge": false,
-              "critical_violations": 2
+              "critical_violations": 3
             },
             {
               "mutation_id": "C",
@@ -2236,7 +2344,7 @@
           ],
           "safe_merges": 3,
           "total_mutations": 7,
-          "avg_compliance": 75
+          "avg_compliance": 71
         },
         {
           "phase": 5,
@@ -2263,26 +2371,26 @@
                 },
                 {
                   "id": "dbtx-003",
-                  "title": "ROLLBACK called in catch block",
+                  "title": "ROLLBACK called in catch block before release()",
                   "severity": "critical"
                 },
                 {
                   "id": "dbtx-005",
                   "title": "rowCount checked to detect zero-stock (not just query success)",
-                  "severity": "high"
+                  "severity": "critical"
                 }
               ],
               "compliance_pct": 20,
               "would_merge": false,
-              "critical_violations": 3
+              "critical_violations": 4
             },
             {
               "mutation_id": "B",
               "mutation_label": "Mutation B — release before ROLLBACK",
               "phase": 5,
               "constraints_total": 5,
-              "constraints_passed": 2,
-              "constraints_failed": 3,
+              "constraints_passed": 1,
+              "constraints_failed": 4,
               "violations": [
                 {
                   "id": "dbtx-001",
@@ -2295,14 +2403,19 @@
                   "severity": "critical"
                 },
                 {
+                  "id": "dbtx-003",
+                  "title": "ROLLBACK called in catch block before release()",
+                  "severity": "critical"
+                },
+                {
                   "id": "dbtx-005",
                   "title": "rowCount checked to detect zero-stock (not just query success)",
-                  "severity": "high"
+                  "severity": "critical"
                 }
               ],
-              "compliance_pct": 40,
+              "compliance_pct": 20,
               "would_merge": false,
-              "critical_violations": 2
+              "critical_violations": 4
             },
             {
               "mutation_id": "C",
@@ -2320,12 +2433,12 @@
                 {
                   "id": "dbtx-005",
                   "title": "rowCount checked to detect zero-stock (not just query success)",
-                  "severity": "high"
+                  "severity": "critical"
                 }
               ],
               "compliance_pct": 60,
               "would_merge": false,
-              "critical_violations": 1
+              "critical_violations": 2
             },
             {
               "mutation_id": "E",
@@ -2356,12 +2469,12 @@
                 {
                   "id": "dbtx-005",
                   "title": "rowCount checked to detect zero-stock (not just query success)",
-                  "severity": "high"
+                  "severity": "critical"
                 }
               ],
               "compliance_pct": 80,
-              "would_merge": true,
-              "critical_violations": 0
+              "would_merge": false,
+              "critical_violations": 1
             },
             {
               "mutation_id": "G",
@@ -2388,9 +2501,9 @@
               "critical_violations": 0
             }
           ],
-          "safe_merges": 3,
+          "safe_merges": 2,
           "total_mutations": 7,
-          "avg_compliance": 69
+          "avg_compliance": 66
         },
         {
           "phase": 6,
@@ -2417,31 +2530,31 @@
                 },
                 {
                   "id": "dbtx-003",
-                  "title": "ROLLBACK called in catch block",
+                  "title": "ROLLBACK called in catch block before release()",
                   "severity": "critical"
                 },
                 {
                   "id": "dbtx-005",
                   "title": "rowCount checked to detect zero-stock (not just query success)",
-                  "severity": "high"
+                  "severity": "critical"
                 },
                 {
                   "id": "dbtx-006",
                   "title": "Pool acquisition wrapped with timeout (no indefinite pool wait)",
-                  "severity": "medium"
+                  "severity": "critical"
                 }
               ],
               "compliance_pct": 17,
               "would_merge": false,
-              "critical_violations": 3
+              "critical_violations": 5
             },
             {
               "mutation_id": "B",
               "mutation_label": "Mutation B — release before ROLLBACK",
               "phase": 6,
               "constraints_total": 6,
-              "constraints_passed": 2,
-              "constraints_failed": 4,
+              "constraints_passed": 1,
+              "constraints_failed": 5,
               "violations": [
                 {
                   "id": "dbtx-001",
@@ -2454,19 +2567,24 @@
                   "severity": "critical"
                 },
                 {
+                  "id": "dbtx-003",
+                  "title": "ROLLBACK called in catch block before release()",
+                  "severity": "critical"
+                },
+                {
                   "id": "dbtx-005",
                   "title": "rowCount checked to detect zero-stock (not just query success)",
-                  "severity": "high"
+                  "severity": "critical"
                 },
                 {
                   "id": "dbtx-006",
                   "title": "Pool acquisition wrapped with timeout (no indefinite pool wait)",
-                  "severity": "medium"
+                  "severity": "critical"
                 }
               ],
-              "compliance_pct": 33,
+              "compliance_pct": 17,
               "would_merge": false,
-              "critical_violations": 2
+              "critical_violations": 5
             },
             {
               "mutation_id": "C",
@@ -2484,17 +2602,17 @@
                 {
                   "id": "dbtx-005",
                   "title": "rowCount checked to detect zero-stock (not just query success)",
-                  "severity": "high"
+                  "severity": "critical"
                 },
                 {
                   "id": "dbtx-006",
                   "title": "Pool acquisition wrapped with timeout (no indefinite pool wait)",
-                  "severity": "medium"
+                  "severity": "critical"
                 }
               ],
               "compliance_pct": 50,
               "would_merge": false,
-              "critical_violations": 1
+              "critical_violations": 3
             },
             {
               "mutation_id": "E",
@@ -2512,12 +2630,12 @@
                 {
                   "id": "dbtx-006",
                   "title": "Pool acquisition wrapped with timeout (no indefinite pool wait)",
-                  "severity": "medium"
+                  "severity": "critical"
                 }
               ],
               "compliance_pct": 67,
               "would_merge": false,
-              "critical_violations": 1
+              "critical_violations": 2
             },
             {
               "mutation_id": "F",
@@ -2530,33 +2648,21 @@
                 {
                   "id": "dbtx-005",
                   "title": "rowCount checked to detect zero-stock (not just query success)",
-                  "severity": "high"
+                  "severity": "critical"
                 },
                 {
                   "id": "dbtx-006",
                   "title": "Pool acquisition wrapped with timeout (no indefinite pool wait)",
-                  "severity": "medium"
+                  "severity": "critical"
                 }
               ],
               "compliance_pct": 67,
-              "would_merge": true,
-              "critical_violations": 0
+              "would_merge": false,
+              "critical_violations": 2
             },
             {
               "mutation_id": "G",
               "mutation_label": "Mutation G — no connectionTimeoutMillis",
-              "phase": 6,
-              "constraints_total": 6,
-              "constraints_passed": 6,
-              "constraints_failed": 0,
-              "violations": [],
-              "compliance_pct": 100,
-              "would_merge": true,
-              "critical_violations": 0
-            },
-            {
-              "mutation_id": "D",
-              "mutation_label": "Mutation D — correct implementation",
               "phase": 6,
               "constraints_total": 6,
               "constraints_passed": 5,
@@ -2565,17 +2671,29 @@
                 {
                   "id": "dbtx-006",
                   "title": "Pool acquisition wrapped with timeout (no indefinite pool wait)",
-                  "severity": "medium"
+                  "severity": "critical"
                 }
               ],
               "compliance_pct": 83,
+              "would_merge": false,
+              "critical_violations": 1
+            },
+            {
+              "mutation_id": "D",
+              "mutation_label": "Mutation D — correct implementation",
+              "phase": 6,
+              "constraints_total": 6,
+              "constraints_passed": 6,
+              "constraints_failed": 0,
+              "violations": [],
+              "compliance_pct": 100,
               "would_merge": true,
               "critical_violations": 0
             }
           ],
-          "safe_merges": 3,
+          "safe_merges": 1,
           "total_mutations": 7,
-          "avg_compliance": 60
+          "avg_compliance": 57
         }
       ],
       "recording": {
@@ -2659,16 +2777,16 @@
             "mutation_id": "F",
             "label": "Mutation F — rowCount not checked",
             "without_whycode_passes": true,
-            "with_whycode_passes": true,
-            "whycode_caught_bug": false,
+            "with_whycode_passes": false,
+            "whycode_caught_bug": true,
             "is_correct": false
           },
           {
             "mutation_id": "G",
             "label": "Mutation G — no connectionTimeoutMillis",
             "without_whycode_passes": true,
-            "with_whycode_passes": true,
-            "whycode_caught_bug": false,
+            "with_whycode_passes": false,
+            "whycode_caught_bug": true,
             "is_correct": false
           },
           {
@@ -2681,9 +2799,9 @@
           }
         ],
         "bad_merges_baseline": 6,
-        "bad_merges_with_whycode": 2,
-        "bugs_caught": 4,
-        "improvement_pct": 67,
+        "bad_merges_with_whycode": 0,
+        "bugs_caught": 6,
+        "improvement_pct": 100,
         "false_negatives": 0
       }
     }
@@ -2694,47 +2812,47 @@
         "phase": 1,
         "label": "Phase 1 (baseline — 0 constraints)",
         "blocked": 0,
-        "total_wrong": 18,
+        "total_wrong": 19,
         "block_rate_pct": 0
       },
       {
         "phase": 2,
         "label": "Phase 2 (+1 constraint, post-incident #1)",
         "blocked": 4,
-        "total_wrong": 18,
-        "block_rate_pct": 22
+        "total_wrong": 19,
+        "block_rate_pct": 21
       },
       {
         "phase": 3,
         "label": "Phase 3 (+2 more constraints, audit)",
-        "blocked": 9,
-        "total_wrong": 18,
-        "block_rate_pct": 50
+        "blocked": 10,
+        "total_wrong": 19,
+        "block_rate_pct": 53
       },
       {
         "phase": 4,
         "label": "Phase 4 (+1 constraint, pen test)",
-        "blocked": 11,
-        "total_wrong": 18,
-        "block_rate_pct": 61
+        "blocked": 13,
+        "total_wrong": 19,
+        "block_rate_pct": 68
       },
       {
         "phase": 5,
         "label": "Phase 5 (+1 constraint, arch review)",
-        "blocked": 11,
-        "total_wrong": 18,
-        "block_rate_pct": 61
+        "blocked": 16,
+        "total_wrong": 19,
+        "block_rate_pct": 84
       },
       {
         "phase": 6,
         "label": "Phase 6 (+1 constraint, code review)",
-        "blocked": 11,
-        "total_wrong": 18,
-        "block_rate_pct": 61
+        "blocked": 19,
+        "total_wrong": 19,
+        "block_rate_pct": 100
       }
     ],
     "dim2_recording": {
-      "total_records": 18,
+      "total_records": 19,
       "source_coverage_pct": 100,
       "origins": [
         "incident",
@@ -2751,9 +2869,9 @@
       "accuracy_pct": 100
     },
     "dim4_agent_improvement": {
-      "bad_merges_without_whycode": 18,
-      "bad_merges_with_whycode": 7,
-      "improvement_pct": 61,
+      "bad_merges_without_whycode": 19,
+      "bad_merges_with_whycode": 0,
+      "improvement_pct": 100,
       "false_negatives": 0
     },
     "total_preventable_cost_usd": 1455000

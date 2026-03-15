@@ -58,6 +58,7 @@ import {
   MUTATION_E as AUTH_E,
   MUTATION_F as AUTH_F,
   MUTATION_G as AUTH_G,
+  MUTATION_H as AUTH_H,
 } from "./scenarios/auth-middleware.js";
 
 import {
@@ -118,13 +119,14 @@ const SCENARIOS: ScenarioConfig[] = [
       { id: "E", label: "Mutation E — no algorithms option (alg:none)", code: AUTH_E },
       { id: "F", label: "Mutation F — ignoreExpiration:true", code: AUTH_F },
       { id: "G", label: "Mutation G — raw payload spread to req.user", code: AUTH_G },
+      { id: "H", label: "Mutation H — hardcoded JWT_SECRET literal", code: AUTH_H },
       { id: "D", label: "Mutation D — correct implementation", code: AUTH_D },
     ],
     constraints: AUTH_CONSTRAINTS,
     records: AUTH_RECORDS,
     incidentHistory: [
       "2023-08-14: Forged admin JWT via jwt.decode() bypass — 12,000 accounts exposed",
-      "2024-01: Security audit — tokens in query params, next() on auth failure",
+      "2024-01: Security audit — tokens in query params, next() on auth failure, hardcoded secrets in git history",
       "2024-06: Pen test — alg:none bypass, ignoreExpiration, payload spread found",
     ],
   },
@@ -440,7 +442,7 @@ async function runBenchmark(): Promise<void> {
 
   console.log("4 Evaluation Dimensions:");
   console.log("  1. Progressive blocking:  6 phases — each new constraint catches more bugs");
-  console.log("  2. Auto-recording:        18 decisions stored with full source context");
+  console.log("  2. Auto-recording:        19 decisions stored with full source context");
   console.log("  3. Deduplication:         Re-recording same constraint skip/merge instead of duplicate");
   console.log("  4. Agent improvement:     Phase 1 (0 constraints) vs Phase 6 (full memory)\n");
 
@@ -674,8 +676,12 @@ async function runBenchmark(): Promise<void> {
   const jsonOutput = {
     run_date: new Date().toISOString(),
     phases: 6,
-    mutations_per_scenario: 7,
-    constraints_per_scenario: 6,
+    mutations_auth: 8,
+    mutations_rate: 7,
+    mutations_dbtx: 7,
+    constraints_auth: 7,
+    constraints_rate: 6,
+    constraints_dbtx: 6,
     scenarios: allScenarios,
     summary: {
       dim1_progressive_blocking: phaseNames.map((name, pi) => {
