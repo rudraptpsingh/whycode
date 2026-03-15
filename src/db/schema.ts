@@ -61,6 +61,19 @@ export function initDb(oversightDir: string): Database.Database {
       tags_text,
       tokenize='porter ascii'
     );
+
+    CREATE TABLE IF NOT EXISTS sessions (
+      id TEXT PRIMARY KEY,
+      agent_id TEXT NOT NULL DEFAULT '',
+      task_description TEXT NOT NULL DEFAULT '',
+      started_at TEXT NOT NULL,
+      ended_at TEXT,
+      status TEXT NOT NULL DEFAULT 'active',
+      decisions_recorded_json TEXT NOT NULL DEFAULT '[]',
+      checks_performed INTEGER NOT NULL DEFAULT 0,
+      summary TEXT NOT NULL DEFAULT '',
+      handoff_notes TEXT NOT NULL DEFAULT ''
+    );
   `)
 
   return db

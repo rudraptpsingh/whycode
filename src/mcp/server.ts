@@ -17,6 +17,9 @@ import { metricsTool, handleGetMetrics } from "./tools/metrics.js"
 import { findSimilarTool, handleFindSimilar } from "./tools/findSimilar.js"
 import { captureConversationTool, handleCaptureConversation } from "./tools/captureConversation.js"
 import { mergeTool, handleMerge } from "./tools/merge.js"
+import { sessionStartTool, handleSessionStart } from "./tools/sessionStart.js"
+import { sessionEndTool, handleSessionEnd } from "./tools/sessionEnd.js"
+import { generateHandoffTool, handleGenerateHandoff, receiveHandoffTool, handleReceiveHandoff } from "./tools/handoff.js"
 
 const require = createRequire(import.meta.url)
 const pkg = require("../../package.json") as { version: string }
@@ -31,6 +34,8 @@ const db = getDb(oversightDir)
 
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
   tools: [
+    sessionStartTool,
+    sessionEndTool,
     getByPathTool,
     getBySymbolTool,
     searchTool,
@@ -40,6 +45,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
     findSimilarTool,
     captureConversationTool,
     mergeTool,
+    generateHandoffTool,
+    receiveHandoffTool,
   ],
 }))
 
@@ -51,6 +58,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     let result: unknown
 
     switch (name) {
+      case "oversight_session_start":
+        result = handleSessionStart(db, input as Parameters<typeof handleSessionStart>[1])
+        break
+      case "oversight_session_end":
+        result = handleSessionEnd(db, input as Parameters<typeof handleSessionEnd>[1])
+        break
       case "oversight_get_by_path":
         result = handleGetByPath(db, input as Parameters<typeof handleGetByPath>[1])
         break
@@ -77,6 +90,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         break
       case "oversight_merge":
         result = handleMerge(db, input as Parameters<typeof handleMerge>[1])
+        break
+      case "oversight_generate_handoff":
+        result = handleGenerateHandoff(db, input as Parameters<typeof handleGenerateHandoff>[1])
+        break
+      case "oversight_receive_handoff":
+        result = handleReceiveHandoff(db, input as Parameters<typeof handleReceiveHandoff>[1])
         break
       default:
         return {

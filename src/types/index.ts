@@ -9,14 +9,16 @@ export type DecisionType =
   | "business-logic"
   | "workaround"
   | "deferred"
+  | "pattern"
 export type ConstraintSeverity = "must" | "should" | "avoid"
 export type Confidence = "definitive" | "provisional" | "exploratory"
 
 export interface CodeAnchor {
-  type: "file" | "function" | "class" | "line-range" | "symbol"
+  type: "file" | "function" | "class" | "line-range" | "symbol" | "glob"
   path: string
   identifier?: string
   lineRange?: [number, number]
+  glob?: string
 }
 
 export interface Constraint {
@@ -112,4 +114,26 @@ export interface CheckChangeResult {
   mustConstraints: Constraint[]
   warnings: string[]
   riskLevel: "low" | "medium" | "high"
+  proceed: boolean
+  blocked: boolean
+  blockReason?: string
+}
+
+export interface OversightSession {
+  id: string
+  agentId: string
+  taskDescription: string
+  startedAt: string
+  endedAt?: string
+  status: "active" | "completed" | "abandoned"
+  decisionsRecorded: string[]
+  checksPerformed: number
+  summary: string
+  handoffNotes: string
+}
+
+export interface EnforcementConfig {
+  mode: "advisory" | "blocking"
+  blockOnMustViolation: boolean
+  blockOnHighRisk: boolean
 }

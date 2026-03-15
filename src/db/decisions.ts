@@ -1,6 +1,16 @@
 import Database from "better-sqlite3"
 import type { OversightRecord, DecisionStatus, SimilarDecision, DuplicateCheckResult } from "../types/index.js"
 
+function matchesGlob(pattern: string, filePath: string): boolean {
+  const escaped = pattern
+    .replace(/[.+^${}()|[\]\\]/g, "\\$&")
+    .replace(/\*\*/g, "\u0000")
+    .replace(/\*/g, "[^/]*")
+    .replace(/\u0000/g, ".*")
+    .replace(/\?/g, "[^/]")
+  return new RegExp(`^${escaped}$`).test(filePath)
+}
+
 interface RawRow {
   id: string
   version: number
@@ -135,6 +145,10 @@ export function getDecisionsByPath(db: Database.Database, filePath: string): Ove
     .map(rowToRecord)
     .filter((record) =>
       record.anchors.some((anchor) => {
+        if (anchor.type === "glob") {
+          const pattern = anchor.glob ?? anchor.path
+          return matchesGlob(pattern, normalizedPath)
+        }
         const anchorPath = anchor.path.replace(/^\.\//, "").replace(/\\/g, "/")
         return (
           anchorPath === normalizedPath ||

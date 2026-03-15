@@ -1,6 +1,6 @@
 import fs from "fs"
 import path from "path"
-import type { OversightConfig } from "../types/index.js"
+import type { OversightConfig, EnforcementConfig } from "../types/index.js"
 
 export function findOversightDir(startDir: string = process.cwd()): string | null {
   let current = startDir
@@ -40,4 +40,22 @@ export function getOversightDir(startDir: string = process.cwd()): string {
 
 export function getDbPath(startDir: string = process.cwd()): string {
   return path.join(getOversightDir(startDir), "decisions.db")
+}
+
+export function readEnforcement(startDir: string = process.cwd()): EnforcementConfig {
+  const oversightDir = findOversightDir(startDir)
+  if (!oversightDir) return { mode: "advisory", blockOnMustViolation: false, blockOnHighRisk: false }
+  const enfPath = path.join(oversightDir, "enforcement.json")
+  if (!fs.existsSync(enfPath)) return { mode: "advisory", blockOnMustViolation: false, blockOnHighRisk: false }
+  try {
+    return JSON.parse(fs.readFileSync(enfPath, "utf-8")) as EnforcementConfig
+  } catch {
+    return { mode: "advisory", blockOnMustViolation: false, blockOnHighRisk: false }
+  }
+}
+
+export function writeEnforcement(config: EnforcementConfig, targetDir: string = process.cwd()): void {
+  const oversightDir = path.join(targetDir, ".oversight")
+  fs.mkdirSync(oversightDir, { recursive: true })
+  fs.writeFileSync(path.join(oversightDir, "enforcement.json"), JSON.stringify(config, null, 2), "utf-8")
 }
