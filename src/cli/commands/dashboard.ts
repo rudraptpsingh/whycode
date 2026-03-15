@@ -6,13 +6,14 @@ export function registerDashboard(program: Command): void {
     .command("dashboard")
     .description("Open the visual decision dashboard in your browser")
     .option("-p, --port <number>", "Port to run the dashboard on", "7654")
+    .option("-d, --dir <path>", "Directory containing the .whycode folder")
     .option("--no-open", "Do not automatically open the browser")
-    .action(async (opts: { port: string; open: boolean }) => {
+    .action(async (opts: { port: string; dir?: string; open: boolean }) => {
       const port = parseInt(opts.port, 10)
 
       let server: { start: () => Promise<void>; stop: () => void }
       try {
-        server = createDashboardServer(port)
+        server = createDashboardServer(port, opts.dir)
       } catch (err: unknown) {
         console.error(String(err))
         process.exit(1)

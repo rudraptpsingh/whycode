@@ -69,12 +69,12 @@ function serveStatic(res: ServerResponse, filePath: string): boolean {
   }
 }
 
-export function createDashboardServer(port = 7654): { start: () => Promise<void>; stop: () => void } {
+export function createDashboardServer(port = 7654, startDir?: string): { start: () => Promise<void>; stop: () => void } {
   const distDir = join(__dirname, "../../dashboard-ui/dist")
   let db: ReturnType<typeof getDb>
 
   try {
-    const whycodeDir = getWhycodeDir()
+    const whycodeDir = getWhycodeDir(startDir ?? process.cwd())
     db = getDb(whycodeDir)
   } catch {
     throw new Error("WhyCode is not initialized in this directory. Run `whycode init` first.")
