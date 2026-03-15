@@ -53,21 +53,25 @@
   },
   "files": [
     "dist/",
+    "dashboard-ui/dist/",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
     "build": "tsc",
     "postbuild": "node --input-type=module -e \"import{chmodSync}from'fs';['dist/cli/index.js','dist/mcp/server.js'].forEach(f=>{try{chmodSync(f,0o755)}catch{}})\"",
+    "build:dashboard": "cd dashboard-ui && npm install && npm run build",
+    "build:all": "npm run build && npm run build:dashboard",
     "build:check": "tsc --noEmit",
     "prepare": "npm run build",
     "dev": "tsx watch src/cli/index.ts",
+    "dev:dashboard": "cd dashboard-ui && npm run dev",
     "start:mcp": "tsx src/mcp/server.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "benchmark": "npx tsx benchmarks/swe-bench-eval/run-eval.ts",
-    "prepublishOnly": "npm run build && npm test",
+    "prepublishOnly": "npm run build:all && npm test",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
