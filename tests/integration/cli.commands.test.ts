@@ -8,6 +8,7 @@ import { insertDecision, getAllDecisions } from "../../src/db/decisions.js"
 import { writeConfig, writeEnforcement, readEnforcement } from "../../src/utils/config.js"
 import { generateOversightMd } from "../../src/utils/generateMarkdown.js"
 import { handleCheckChange } from "../../src/mcp/tools/checkChange.js"
+import { searchDecisions } from "../../src/db/search.js"
 import type { OversightRecord, OversightConfig } from "../../src/types/index.js"
 
 function tmpDir(): string {
@@ -370,5 +371,92 @@ describe("enforce command logic (readEnforcement / writeEnforcement)", () => {
     } finally {
       process.chdir(orig)
     }
+  })
+})
+
+describe("search command logic (searchDecisions)", () => {
+  let base: string
+  let oversightDir: string
+
+  beforeEach(() => {
+    base = tmpDir()
+    oversightDir = setupOversightDir(base)
+  })
+  afterEach(() => { fs.rmSync(base, { recursive: true, force: true }) })
+
+  it("returns empty array when no decisions exist", () => {
+    const db = initDb(oversightDir)
+    const results = searchDecisions(db, { query: "rate limiting" })
+    expect(results).toHaveLength(0)
+  })
+
+  it("finds decisions by title keyword", () => {
+    const db = initDb(oversightDir)
+    insertDecision(db, makeRecord({ id: uuidv4(), title: "PCI compliance for payment data" }))
+    insertDecision(db, makeRecord({ id: uuidv4(), title: "Redis rate limiting strategy" }))
+    const results = searchDecisions(db, { query: "rate limiting" })
+    expect(results.some((r) => r.title.toLowerCase().includes("rate"))).toBe(true)
+  })
+
+  it("returns all decisions when no query is given", () => {
+    const db = initDb(oversightDir)
+    insertDecision(db, makeRecord({ id: uuidv4() }))
+    insertDecision(db, makeRecord({ id: uuidv4() }))
+    const results = searchDecisions(db, {})
+    expect(results.length).toBeGreaterThanOrEqual(2)
+  })
+
+  it("filters by tag", () => {
+    const db = initDb(oversightDir)
+    insertDecision(db, makeRecord({ id: uuidv4(), tags: ["pci", "security"] }))
+    insertDecision(db, makeRecord({ id: uuidv4(), tags: ["performance"] }))
+    const results = searchDecisions(db, { tags: ["pci"] })
+    expect(results).toHaveLength(1)
+    expect(results[0].tags).toContain("pci")
+  })
+
+  it("filters by decision type", () => {
+    const db = initDb(oversightDir)
+    insertDecision(db, makeRecord({ id: uuidv4(), decisionType: "compliance" }))
+    insertDecision(db, makeRecord({ id: uuidv4(), decisionType: "performance" }))
+    const results = searchDecisions(db, { decisionTypes: ["compliance"] })
+    expect(results).toHaveLength(1)
+    expect(results[0].decisionType).toBe("compliance")
+  })
+
+  it("filters by status", () => {
+    const db = initDb(oversightDir)
+    insertDecision(db, makeRecord({ id: uuidv4(), status: "active" }))
+    insertDecision(db, makeRecord({ id: uuidv4(), status: "superseded" }))
+    const results = searchDecisions(db, { status: "superseded" })
+    expect(results).toHaveLength(1)
+    expect(results[0].status).toBe("superseded")
+  })
+
+  it("respects limit option", () => {
+    const db = initDb(oversightDir)
+    for (let i = 0; i < 5; i++) {
+      insertDecision(db, makeRecord({ id: uuidv4(), title: `Decision ${i}` }))
+    }
+    const results = searchDecisions(db, { limit: 2 })
+    expect(results).toHaveLength(2)
+  })
+
+  it("deduplicates results", () => {
+    const db = initDb(oversightDir)
+    insertDecision(db, makeRecord({ id: uuidv4(), title: "PCI security requirement" }))
+    const results = searchDecisions(db, {})
+    const ids = results.map((r) => r.id)
+    const uniqueIds = new Set(ids)
+    expect(ids.length).toBe(uniqueIds.size)
+  })
+
+  it("combined: query + tag filter", () => {
+    const db = initDb(oversightDir)
+    insertDecision(db, makeRecord({ id: uuidv4(), title: "PCI compliance rule", tags: ["pci"] }))
+    insertDecision(db, makeRecord({ id: uuidv4(), title: "PCI reporting rule", tags: ["reporting"] }))
+    const results = searchDecisions(db, { query: "PCI", tags: ["pci"] })
+    expect(results).toHaveLength(1)
+    expect(results[0].tags).toContain("pci")
   })
 })
