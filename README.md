@@ -105,7 +105,7 @@ Add to your MCP configuration:
 
 | Tool | When an agent uses it |
 |---|---|
-| `oversight_get_by_path` | Before editing a file — surfaces all decisions anchored to it |
+| `oversight_get_by_path` | Before editing files — pass `paths: ["a.ts","b.ts"]` to batch; surfaces decisions for all paths |
 | `oversight_check_change` | Before a refactor — risk assessment + constraint warnings |
 | `oversight_search` | When looking for relevant prior decisions |
 | `oversight_record` | After making a decision — saves it with full context |
@@ -143,6 +143,7 @@ oversight enforce off       Disable blocking (advisory mode)
 oversight enforce staged    Check staged files (exits 1 if blocked; used by pre-commit)
 oversight enforce staged --dry-run   Preview without blocking (CI)
 oversight export            Export decisions to JSON (stdout or -o file)
+oversight scan              Scan codebase for constraint-like comments (--dry-run, --no-ai)
 oversight dashboard         Open the visual decision dashboard
 ```
 

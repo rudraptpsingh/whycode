@@ -38,7 +38,7 @@ export interface AgentHint {
   scope: "file" | "function" | "pattern"
 }
 
-export type ConversationOrigin = "user-chat" | "agent-decision" | "pr-discussion" | "incident" | "code-review" | "manual"
+export type ConversationOrigin = "user-chat" | "agent-decision" | "pr-discussion" | "incident" | "code-review" | "manual" | "code-comment"
 
 export interface ConversationSource {
   origin: ConversationOrigin

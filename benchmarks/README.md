@@ -37,7 +37,24 @@ Create targeted benchmarks for popular frameworks with known patterns.
 
 ## Current Benchmarks
 
-### 1. Next.js Image Optimization Challenge
+### 1. Agent A/B Benchmark (Express Auth + Rate Limiting)
+
+**Status**: ✅ Implemented
+
+**Scenario**: Build Express API with JWT auth + Redis rate limiter. Agent A has no Oversight; Agent B queries constraints before editing.
+
+**Run it**:
+```bash
+npm run build
+npx tsx benchmarks/agent-ab-test/run-benchmark.ts --scenario B3 --runs 1
+# Or: npm run benchmark:agent-ab
+```
+
+**Result**: Agent B reduces violations by ~50% and cost at risk by ~93% (e.g. $150k → $10k). See [agent-ab-test/README.md](./agent-ab-test/README.md).
+
+---
+
+### 2. Next.js Image Optimization Challenge
 
 **Status**: ✅ Implemented
 

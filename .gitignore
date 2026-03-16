@@ -26,3 +26,6 @@ Thumbs.db
 
 # Cursor (created by postinstall)
 .cursor/
+
+# Benchmark run artifacts
+benchmarks/agent-ab-test/.work/

@@ -16,6 +16,7 @@ import { registerGenerate } from "./commands/generate.js"
 import { registerExport } from "./commands/export.js"
 import { registerEnforce } from "./commands/enforce.js"
 import { registerSearch } from "./commands/search.js"
+import { registerScan } from "./commands/scan.js"
 
 const require = createRequire(import.meta.url)
 const pkg = require("../../package.json") as { version: string; description: string }
@@ -48,6 +49,7 @@ registerGenerate(program)
 registerExport(program)
 registerEnforce(program)
 registerSearch(program)
+registerScan(program)
 
 program.parseAsync(process.argv).catch((err: unknown) => {
   console.error(String(err))
