@@ -35,8 +35,8 @@ describe("metrics: computeMetrics", () => {
   beforeEach(() => { tmpdir = tmpDir() })
   afterEach(() => { fs.rmSync(tmpdir, { recursive: true, force: true }) })
 
-  it("returns zeroed metrics for an empty database", () => {
-    const db = initDb(tmpdir)
+  it("returns zeroed metrics for an empty database", async () => {
+    const db = await initDb(tmpdir)
     const m = computeMetrics(db)
     expect(m.decisions.total).toBe(0)
     expect(m.decisions.active).toBe(0)
@@ -45,8 +45,8 @@ describe("metrics: computeMetrics", () => {
     expect(m.coverage.constraintDensity).toBe(0)
   })
 
-  it("counts decisions by status correctly", () => {
-    const db = initDb(tmpdir)
+  it("counts decisions by status correctly", async () => {
+    const db = await initDb(tmpdir)
     insertDecision(db, makeRecord({ status: "active" }))
     insertDecision(db, makeRecord({ status: "active" }))
     insertDecision(db, makeRecord({ status: "deprecated" }))
@@ -61,8 +61,8 @@ describe("metrics: computeMetrics", () => {
     expect(m.decisions.needsReview).toBe(1)
   })
 
-  it("tallies constraints by severity across all decisions", () => {
-    const db = initDb(tmpdir)
+  it("tallies constraints by severity across all decisions", async () => {
+    const db = await initDb(tmpdir)
     insertDecision(db, makeRecord({
       constraints: [
         { description: "A", severity: "must", rationale: "r" },
@@ -85,8 +85,8 @@ describe("metrics: computeMetrics", () => {
     expect(m.coverage.constraintDensity).toBeCloseTo(5 / 3, 2)
   })
 
-  it("counts unique protected files from anchors", () => {
-    const db = initDb(tmpdir)
+  it("counts unique protected files from anchors", async () => {
+    const db = await initDb(tmpdir)
     insertDecision(db, makeRecord({
       anchors: [
         { type: "file", path: "src/auth.ts" },
@@ -110,8 +110,8 @@ describe("metrics: computeMetrics", () => {
     expect(m.coverage.decisionsPerProtectedFile).toBeCloseTo(3 / 3, 2)
   })
 
-  it("counts alternatives documented", () => {
-    const db = initDb(tmpdir)
+  it("counts alternatives documented", async () => {
+    const db = await initDb(tmpdir)
     insertDecision(db, makeRecord({
       alternatives: [
         { description: "Option A", rejectionReason: "Too slow" },
@@ -128,8 +128,8 @@ describe("metrics: computeMetrics", () => {
     expect(m.decisions.alternativesDocumented).toBe(3)
   })
 
-  it("counts decisions with agent hints and doNotChange patterns", () => {
-    const db = initDb(tmpdir)
+  it("counts decisions with agent hints and doNotChange patterns", async () => {
+    const db = await initDb(tmpdir)
     insertDecision(db, makeRecord({
       agentHints: [{ instruction: "Do not add retries here", scope: "function" }],
       doNotChange: ["rawPassword"],
@@ -142,8 +142,8 @@ describe("metrics: computeMetrics", () => {
     expect(m.coverage.agentHintDensity).toBeCloseTo(0.5, 2)
   })
 
-  it("groups decisions by type and confidence", () => {
-    const db = initDb(tmpdir)
+  it("groups decisions by type and confidence", async () => {
+    const db = await initDb(tmpdir)
     insertDecision(db, makeRecord({ decisionType: "security", confidence: "definitive" }))
     insertDecision(db, makeRecord({ decisionType: "security", confidence: "definitive" }))
     insertDecision(db, makeRecord({ decisionType: "performance", confidence: "provisional" }))
@@ -162,8 +162,8 @@ describe("metrics: logCheckChange and aggregation", () => {
   beforeEach(() => { tmpdir = tmpDir() })
   afterEach(() => { fs.rmSync(tmpdir, { recursive: true, force: true }) })
 
-  it("records check_change log entries", () => {
-    const db = initDb(tmpdir)
+  it("records check_change log entries", async () => {
+    const db = await initDb(tmpdir)
     logCheckChange(db, {
       changeDescription: "Refactor auth",
       affectedPaths: ["src/auth.ts"],
@@ -185,8 +185,8 @@ describe("metrics: logCheckChange and aggregation", () => {
     expect(m.checkChange.uniqueFilesChecked).toBe(1)
   })
 
-  it("aggregates multiple check_change log entries", () => {
-    const db = initDb(tmpdir)
+  it("aggregates multiple check_change log entries", async () => {
+    const db = await initDb(tmpdir)
 
     logCheckChange(db, {
       changeDescription: "Change 1",
@@ -229,8 +229,8 @@ describe("metrics: logCheckChange and aggregation", () => {
     expect(m.checkChange.uniqueFilesChecked).toBe(4)
   })
 
-  it("handleCheckChange automatically logs to the metrics table", () => {
-    const db = initDb(tmpdir)
+  it("handleCheckChange automatically logs to the metrics table", async () => {
+    const db = await initDb(tmpdir)
 
     insertDecision(db, makeRecord({
       anchors: [{ type: "file", path: "src/auth.ts" }],
@@ -255,8 +255,8 @@ describe("metrics: oversight_get_metrics MCP tool", () => {
   beforeEach(() => { tmpdir = tmpDir() })
   afterEach(() => { fs.rmSync(tmpdir, { recursive: true, force: true }) })
 
-  it("returns the same structure as computeMetrics", () => {
-    const db = initDb(tmpdir)
+  it("returns the same structure as computeMetrics", async () => {
+    const db = await initDb(tmpdir)
     insertDecision(db, makeRecord({
       constraints: [{ description: "A", severity: "must", rationale: "r" }],
       agentHints: [{ instruction: "Hint", scope: "file" }],
@@ -274,8 +274,8 @@ describe("metrics: oversight_get_metrics MCP tool", () => {
     expect(viaMcp.coverage.constraintDensity).toBe(direct.coverage.constraintDensity)
   })
 
-  it("reflects live changes after additional decisions are inserted", () => {
-    const db = initDb(tmpdir)
+  it("reflects live changes after additional decisions are inserted", async () => {
+    const db = await initDb(tmpdir)
 
     let m = handleGetMetrics(db)
     expect(m.decisions.total).toBe(0)

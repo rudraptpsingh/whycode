@@ -56,8 +56,8 @@ describe("Complex Scenario: Full lifecycle of a decision", () => {
   beforeEach(() => { tmpdir = tmpDir() })
   afterEach(() => { fs.rmSync(tmpdir, { recursive: true, force: true }) })
 
-  it("records a decision via MCP, finds it by path, updates it, and verifies versioning", () => {
-    const db = initDb(tmpdir)
+  it("records a decision via MCP, finds it by path, updates it, and verifies versioning", async () => {
+    const db = await initDb(tmpdir)
 
     const { id, record } = handleRecord(db, {
       title: "Rate limiting strategy",
@@ -102,8 +102,8 @@ describe("Complex Scenario: Multi-file architectural refactor risk assessment", 
   beforeEach(() => { tmpdir = tmpDir() })
   afterEach(() => { fs.rmSync(tmpdir, { recursive: true, force: true }) })
 
-  it("aggregates must constraints from multiple files and reports HIGH risk", () => {
-    const db = initDb(tmpdir)
+  it("aggregates must constraints from multiple files and reports HIGH risk", async () => {
+    const db = await initDb(tmpdir)
 
     insertDecision(db, makeRecord({
       title: "Auth module constraints",
@@ -149,8 +149,8 @@ describe("Complex Scenario: Multi-file architectural refactor risk assessment", 
     expect(result.warnings.some((w) => w.includes("[SHOULD]"))).toBe(true)
   })
 
-  it("deduplicates a decision anchored to a directory when multiple child files are affected", () => {
-    const db = initDb(tmpdir)
+  it("deduplicates a decision anchored to a directory when multiple child files are affected", async () => {
+    const db = await initDb(tmpdir)
 
     insertDecision(db, makeRecord({
       title: "Auth module global policy",
@@ -176,8 +176,8 @@ describe("Complex Scenario: Decision supersession chain", () => {
   beforeEach(() => { tmpdir = tmpDir() })
   afterEach(() => { fs.rmSync(tmpdir, { recursive: true, force: true }) })
 
-  it("supersedes an old decision and only returns the active one by default", () => {
-    const db = initDb(tmpdir)
+  it("supersedes an old decision and only returns the active one by default", async () => {
+    const db = await initDb(tmpdir)
 
     const oldId = uuidv4()
     const newId = uuidv4()
@@ -221,8 +221,8 @@ describe("Complex Scenario: Full-text search with filters and ranking", () => {
   beforeEach(() => { tmpdir = tmpDir() })
   afterEach(() => { fs.rmSync(tmpdir, { recursive: true, force: true }) })
 
-  it("searches across multiple fields and applies tag filters correctly", () => {
-    const db = initDb(tmpdir)
+  it("searches across multiple fields and applies tag filters correctly", async () => {
+    const db = await initDb(tmpdir)
 
     insertDecision(db, makeRecord({
       title: "JWT authentication",
@@ -267,8 +267,8 @@ describe("Complex Scenario: Full-text search with filters and ranking", () => {
     expect(limited).toHaveLength(1)
   })
 
-  it("searches rationale and context fields, not just title", () => {
-    const db = initDb(tmpdir)
+  it("searches rationale and context fields, not just title", async () => {
+    const db = await initDb(tmpdir)
 
     insertDecision(db, makeRecord({
       title: "Unrelated title",
@@ -289,8 +289,8 @@ describe("Complex Scenario: Symbol-based discovery for multi-anchor decisions", 
   beforeEach(() => { tmpdir = tmpDir() })
   afterEach(() => { fs.rmSync(tmpdir, { recursive: true, force: true }) })
 
-  it("finds a decision anchored to multiple functions and retrieves it by each symbol", () => {
-    const db = initDb(tmpdir)
+  it("finds a decision anchored to multiple functions and retrieves it by each symbol", async () => {
+    const db = await initDb(tmpdir)
 
     const record = makeRecord({
       title: "Password hashing policy",
@@ -330,8 +330,8 @@ describe("Complex Scenario: Agent workflow - record then check", () => {
   beforeEach(() => { tmpdir = tmpDir() })
   afterEach(() => { fs.rmSync(tmpdir, { recursive: true, force: true }) })
 
-  it("agent records a decision with doNotChange patterns, then checkChange surfaces them as warnings", () => {
-    const db = initDb(tmpdir)
+  it("agent records a decision with doNotChange patterns, then checkChange surfaces them as warnings", async () => {
+    const db = await initDb(tmpdir)
 
     handleRecord(db, {
       title: "Payment processing core",
@@ -364,8 +364,8 @@ describe("Complex Scenario: Agent workflow - record then check", () => {
     expect(result.warnings.some((w) => w.includes("Never log card numbers"))).toBe(true)
   })
 
-  it("agent records multiple decisions sequentially and getAllDecisions returns them all", () => {
-    const db = initDb(tmpdir)
+  it("agent records multiple decisions sequentially and getAllDecisions returns them all", async () => {
+    const db = await initDb(tmpdir)
 
     const r1 = handleRecord(db, {
       title: "Frontend bundling",
@@ -407,8 +407,8 @@ describe("Complex Scenario: Status lifecycle and stale decision management", () 
   beforeEach(() => { tmpdir = tmpDir() })
   afterEach(() => { fs.rmSync(tmpdir, { recursive: true, force: true }) })
 
-  it("transitions a decision through proposed → active → needs-review → deprecated", () => {
-    const db = initDb(tmpdir)
+  it("transitions a decision through proposed → active → needs-review → deprecated", async () => {
+    const db = await initDb(tmpdir)
 
     const { id } = handleRecord(db, {
       title: "GraphQL adoption",
@@ -439,8 +439,8 @@ describe("Complex Scenario: Status lifecycle and stale decision management", () 
     expect(deprecated.find((r) => r.id === id)).toBeDefined()
   })
 
-  it("deleting a decision removes it from path lookups and search", () => {
-    const db = initDb(tmpdir)
+  it("deleting a decision removes it from path lookups and search", async () => {
+    const db = await initDb(tmpdir)
 
     const { id } = handleRecord(db, {
       title: "Temporary workaround",
@@ -474,8 +474,8 @@ describe("Complex Scenario: Constraint priority escalation", () => {
   beforeEach(() => { tmpdir = tmpDir() })
   afterEach(() => { fs.rmSync(tmpdir, { recursive: true, force: true }) })
 
-  it("escalates from low to medium risk when a should constraint is added via update", () => {
-    const db = initDb(tmpdir)
+  it("escalates from low to medium risk when a should constraint is added via update", async () => {
+    const db = await initDb(tmpdir)
 
     const { id } = handleRecord(db, {
       title: "Logging strategy",
@@ -526,8 +526,8 @@ describe("Complex Scenario: Cross-cutting concerns with agent hints", () => {
   beforeEach(() => { tmpdir = tmpDir() })
   afterEach(() => { fs.rmSync(tmpdir, { recursive: true, force: true }) })
 
-  it("stores and retrieves agent hints with function-scoped decisions", () => {
-    const db = initDb(tmpdir)
+  it("stores and retrieves agent hints with function-scoped decisions", async () => {
+    const db = await initDb(tmpdir)
 
     const { id } = handleRecord(db, {
       title: "Token refresh logic",

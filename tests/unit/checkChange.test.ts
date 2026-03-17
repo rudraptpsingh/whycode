@@ -30,16 +30,16 @@ describe("handleCheckChange", () => {
   beforeEach(() => { tmpdir = tmpDir() })
   afterEach(() => { fs.rmSync(tmpdir, { recursive: true, force: true }) })
 
-  it("returns low risk when no constraints", () => {
-    const db = initDb(tmpdir)
+  it("returns low risk when no constraints", async () => {
+    const db = await initDb(tmpdir)
     insertDecision(db, makeRecord({ constraints: [] }))
     const result = handleCheckChange(db, { changeDescription: "refactor auth", affectedPaths: ["src/auth.ts"] })
     expect(result.riskLevel).toBe("low")
     expect(result.relevantDecisions).toHaveLength(1)
   })
 
-  it("returns high risk with must constraints", () => {
-    const db = initDb(tmpdir)
+  it("returns high risk with must constraints", async () => {
+    const db = await initDb(tmpdir)
     insertDecision(db, makeRecord({ constraints: [{ description: "Never log passwords", severity: "must", rationale: "Security" }] }))
     const result = handleCheckChange(db, { changeDescription: "change auth logging", affectedPaths: ["src/auth.ts"] })
     expect(result.riskLevel).toBe("high")
@@ -47,22 +47,22 @@ describe("handleCheckChange", () => {
     expect(result.warnings.length).toBeGreaterThan(0)
   })
 
-  it("returns medium risk with should constraints", () => {
-    const db = initDb(tmpdir)
+  it("returns medium risk with should constraints", async () => {
+    const db = await initDb(tmpdir)
     insertDecision(db, makeRecord({ constraints: [{ description: "Prefer bcrypt", severity: "should", rationale: "Best practice" }] }))
     const result = handleCheckChange(db, { changeDescription: "change password hashing", affectedPaths: ["src/auth.ts"] })
     expect(result.riskLevel).toBe("medium")
   })
 
-  it("deduplicates decisions across multiple paths", () => {
-    const db = initDb(tmpdir)
+  it("deduplicates decisions across multiple paths", async () => {
+    const db = await initDb(tmpdir)
     insertDecision(db, makeRecord({ anchors: [{ type: "file", path: "src/auth.ts" }] }))
     const result = handleCheckChange(db, { changeDescription: "big refactor", affectedPaths: ["src/auth.ts", "src/auth.ts"] })
     expect(result.relevantDecisions).toHaveLength(1)
   })
 
-  it("returns empty result when no matching decisions", () => {
-    const db = initDb(tmpdir)
+  it("returns empty result when no matching decisions", async () => {
+    const db = await initDb(tmpdir)
     const result = handleCheckChange(db, { changeDescription: "change something", affectedPaths: ["src/unrelated.ts"] })
     expect(result.relevantDecisions).toHaveLength(0)
     expect(result.riskLevel).toBe("low")

@@ -37,8 +37,8 @@ describe("DB operations", () => {
   beforeEach(() => { tmpdir = tmpDir() })
   afterEach(() => { fs.rmSync(tmpdir, { recursive: true, force: true }) })
 
-  it("inserts and retrieves a record by id", () => {
-    const db = initDb(tmpdir)
+  it("inserts and retrieves a record by id", async () => {
+    const db = await initDb(tmpdir)
     const record = makeRecord()
     insertDecision(db, record)
     const fetched = getDecisionById(db, record.id)
@@ -49,13 +49,13 @@ describe("DB operations", () => {
     expect(fetched!.tags).toEqual(["auth", "security"])
   })
 
-  it("returns null for non-existent id", () => {
-    const db = initDb(tmpdir)
+  it("returns null for non-existent id", async () => {
+    const db = await initDb(tmpdir)
     expect(getDecisionById(db, "nonexistent")).toBeNull()
   })
 
-  it("gets decisions by file path", () => {
-    const db = initDb(tmpdir)
+  it("gets decisions by file path", async () => {
+    const db = await initDb(tmpdir)
     const r1 = makeRecord({ anchors: [{ type: "file", path: "src/auth/validator.ts" }] })
     const r2 = makeRecord({ anchors: [{ type: "file", path: "src/user/service.ts" }] })
     insertDecision(db, r1)
@@ -65,16 +65,16 @@ describe("DB operations", () => {
     expect(results[0].id).toBe(r1.id)
   })
 
-  it("matches parent directory paths", () => {
-    const db = initDb(tmpdir)
+  it("matches parent directory paths", async () => {
+    const db = await initDb(tmpdir)
     const r = makeRecord({ anchors: [{ type: "file", path: "src/auth" }] })
     insertDecision(db, r)
     const results = getDecisionsByPath(db, "src/auth/validator.ts")
     expect(results).toHaveLength(1)
   })
 
-  it("gets all decisions with status filter", () => {
-    const db = initDb(tmpdir)
+  it("gets all decisions with status filter", async () => {
+    const db = await initDb(tmpdir)
     insertDecision(db, makeRecord({ status: "active" }))
     insertDecision(db, makeRecord({ status: "deprecated" }))
     const active = getAllDecisions(db, "active")
@@ -82,8 +82,8 @@ describe("DB operations", () => {
     expect(active[0].status).toBe("active")
   })
 
-  it("updates a decision", () => {
-    const db = initDb(tmpdir)
+  it("updates a decision", async () => {
+    const db = await initDb(tmpdir)
     const record = makeRecord()
     insertDecision(db, record)
     const updated = updateDecision(db, record.id, { title: "Updated Title" })
@@ -92,8 +92,8 @@ describe("DB operations", () => {
     expect(updated!.version).toBe(2)
   })
 
-  it("deletes a decision", () => {
-    const db = initDb(tmpdir)
+  it("deletes a decision", async () => {
+    const db = await initDb(tmpdir)
     const record = makeRecord()
     insertDecision(db, record)
     const deleted = deleteDecision(db, record.id)
@@ -101,8 +101,8 @@ describe("DB operations", () => {
     expect(getDecisionById(db, record.id)).toBeNull()
   })
 
-  it("full-text search finds records", () => {
-    const db = initDb(tmpdir)
+  it("full-text search finds records", async () => {
+    const db = await initDb(tmpdir)
     insertDecision(db, makeRecord({ title: "JWT authentication", summary: "Use JWT for tokens" }))
     insertDecision(db, makeRecord({ title: "Database pooling", summary: "Connection pool config" }))
     const results = searchDecisions(db, { query: "JWT" })
@@ -110,16 +110,16 @@ describe("DB operations", () => {
     expect(results[0].title).toContain("JWT")
   })
 
-  it("search filters by tags", () => {
-    const db = initDb(tmpdir)
+  it("search filters by tags", async () => {
+    const db = await initDb(tmpdir)
     insertDecision(db, makeRecord({ tags: ["auth", "security"] }))
     insertDecision(db, makeRecord({ tags: ["database"] }))
     const results = searchDecisions(db, { tags: ["auth"] })
     expect(results).toHaveLength(1)
   })
 
-  it("deduplicates constraints on insert (subsumed)", () => {
-    const db = initDb(tmpdir)
+  it("deduplicates constraints on insert (subsumed)", async () => {
+    const db = await initDb(tmpdir)
     const record = makeRecord({
       constraints: [
         {
@@ -142,8 +142,8 @@ describe("DB operations", () => {
     expect(fetched!.constraints[0].rationale).toContain("Burst abuse")
   })
 
-  it("deduplicates constraints on update", () => {
-    const db = initDb(tmpdir)
+  it("deduplicates constraints on update", async () => {
+    const db = await initDb(tmpdir)
     const record = makeRecord({
       constraints: [
         { severity: "must", description: "Use Redis", rationale: "Distributed" },
