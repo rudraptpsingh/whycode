@@ -8,6 +8,7 @@ import { retrieveConstraintsByQuery } from "../../db/retrieval.js"
 import { findOversightDir } from "../../utils/config.js"
 import type { OversightSession } from "../../types/index.js"
 
+/** BM25 retrieval cap for session_start — topK ≤ 20 per seed-bm25-coefficients. Never return all constraints. */
 const SESSION_TOP_K = 20
 
 export const sessionStartTool = {

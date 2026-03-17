@@ -1,5 +1,6 @@
 import type { Database } from "../db/adapter.js"
 
+/** Priority order is fixed: CRITICAL > HIGH > MEDIUM > LOW — per seed-backlog-priority-order. */
 export type BacklogPriority = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW"
 export type BacklogType =
   | "STRENGTHEN"

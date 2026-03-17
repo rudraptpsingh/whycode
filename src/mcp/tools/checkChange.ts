@@ -17,9 +17,12 @@ import type {
   EnforcementOutcome,
 } from "../../types/index.js"
 
+/** BM25 retrieval cap — must match seed-bm25-coefficients (topK ≤ 10 in check_change). */
 const DEFAULT_TOP_K = 10
-// Files with >= this many violations in last 30 log entries trigger a pre-violation warning
+/** Files with >= this many violations in last 30 log entries trigger a pre-violation warning. */
 const PRE_VIOLATION_THRESHOLD = 3
+/** slim=true is the default — agents must opt-in to full response (seed-slim-default). */
+const DEFAULT_SLIM = true
 
 export const checkChangeTool = {
   name: "oversight_check_change",

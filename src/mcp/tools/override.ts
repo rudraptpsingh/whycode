@@ -1,6 +1,7 @@
 import type { Database } from "../../db/adapter.js"
 import { onOverride, classifyOverrideIntent } from "../../engine/confidence.js"
 
+/** Minimum rationale length to prevent vacuous overrides — per seed-override-rationale-min. */
 const MIN_RATIONALE_LENGTH = 10
 
 export const overrideTool = {

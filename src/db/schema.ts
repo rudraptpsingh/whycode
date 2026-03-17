@@ -4,6 +4,11 @@ import { openDatabase, type Database } from "./adapter.js"
 
 export type { Database }
 
+/**
+ * Initialize DB with all required tables. Schema changes must be additive only —
+ * never drop or rename existing columns (seed-db-schema-additive).
+ * WAL mode is set via openDatabase — all callers inherit it (seed-db-wal-mode).
+ */
 export async function initDb(oversightDir: string): Promise<Database> {
   fs.mkdirSync(oversightDir, { recursive: true })
   const dbPath = path.join(oversightDir, "decisions.db")
