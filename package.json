@@ -1,6 +1,6 @@
 {
   "name": "oversight",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Oversight for AI agents — capture architectural constraints so agents never repeat past mistakes",
   "type": "module",
   "license": "MIT",
@@ -93,7 +93,6 @@
     "inquirer": "^13.3.0",
     "openai": "^6.29.0",
     "ora": "^9.3.0",
-    "oversight": "^0.1.1",
     "sql.js": "^1.14.1",
     "uuid": "^13.0.0",
     "zod": "^3.24.2"

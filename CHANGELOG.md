@@ -7,6 +7,22 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ---
 
+## [0.1.2] — 2026-03-17
+
+### Fixed
+- Removed circular self-dependency (`oversight` listed as its own dependency)
+
+### Changed
+- Version bump to `0.1.2` for npm publish
+
+---
+
+## [0.1.1] — 2026-03-15
+
+> Patch release — no functional changes from `0.1.0`; corrected package metadata.
+
+---
+
 ## [0.1.0] — 2026-03-15
 
 Initial public release. Rebranded from WhyCode to Oversight (npm package `oversight`).
@@ -50,4 +66,6 @@ Initial public release. Rebranded from WhyCode to Oversight (npm package `oversi
 - Dependabot for npm and GitHub Actions
 - MIT license
 
+[0.1.2]: https://github.com/rudraptpsingh/oversight/releases/tag/v0.1.2
+[0.1.1]: https://github.com/rudraptpsingh/oversight/releases/tag/v0.1.1
 [0.1.0]: https://github.com/rudraptpsingh/oversight/releases/tag/v0.1.0
