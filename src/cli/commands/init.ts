@@ -17,13 +17,28 @@ function getGitAuthor(): string {
 
 const CURSOR_RULE = `---
 description: Use Oversight to record and enforce architectural decisions
-globs: 
+globs:
 alwaysApply: true
 ---
 
 # Oversight — Decision Memory
 
 Before editing files involved in architecture or security, call Oversight MCP tools:
+
+1. **Before significant changes**: Call \`oversight_check_change\` with the change description and affected paths.
+2. **When making architectural decisions**: Call \`oversight_record\` to store the decision with constraints and anchors.
+3. **Before editing a file**: Call \`oversight_get_by_path\` to surface anchored decisions.
+4. **When unsure**: Call \`oversight_search\` to find relevant past decisions.
+
+Respect MUST constraints. If \`oversight_check_change\` returns high risk, revise the change or get explicit approval.
+`
+
+const CLAUDE_MD_SECTION = `
+## Oversight — Decision Memory
+
+This project uses [Oversight](https://github.com/anthropics/oversight) to record and enforce architectural decisions.
+
+Before editing files involved in architecture or security, use the Oversight MCP tools:
 
 1. **Before significant changes**: Call \`oversight_check_change\` with the change description and affected paths.
 2. **When making architectural decisions**: Call \`oversight_record\` to store the decision with constraints and anchors.
@@ -50,6 +65,7 @@ export async function ensureInitNonInteractive(cwd: string = process.cwd()): Pro
     "utf-8"
   )
   ensureCursorIntegration(cwd)
+  ensureClaudeCodeIntegration(cwd)
   return true
 }
 
@@ -97,6 +113,76 @@ export function ensureCursorIntegration(cwd: string): void {
   }
   if (wrote) {
     logger.info("Created .cursor/rules/oversight.mdc and .cursor/mcp.json — restart Cursor to load MCP.")
+  }
+}
+
+export function ensureClaudeCodeIntegration(cwd: string): void {
+  const oversightServer = { command: "npx", args: ["-y", "oversight-mcp"], cwd }
+
+  // 1. .mcp.json — Claude Code reads MCP servers from this file at the project root
+  const mcpJsonPath = path.join(cwd, ".mcp.json")
+  let wroteMcp = false
+  if (!fs.existsSync(mcpJsonPath)) {
+    fs.writeFileSync(
+      mcpJsonPath,
+      JSON.stringify({ mcpServers: { oversight: oversightServer } }, null, 2),
+      "utf-8"
+    )
+    wroteMcp = true
+  } else {
+    try {
+      const existing = JSON.parse(fs.readFileSync(mcpJsonPath, "utf-8"))
+      if (!existing.mcpServers?.oversight) {
+        existing.mcpServers = existing.mcpServers || {}
+        existing.mcpServers.oversight = oversightServer
+        fs.writeFileSync(mcpJsonPath, JSON.stringify(existing, null, 2), "utf-8")
+        wroteMcp = true
+      }
+    } catch {
+      /* ignore malformed .mcp.json */
+    }
+  }
+
+  // 2. .claude/settings.json — enable the oversight MCP server for this project
+  const claudeDir = path.join(cwd, ".claude")
+  const claudeSettingsPath = path.join(claudeDir, "settings.json")
+  let wroteSettings = false
+  if (!fs.existsSync(claudeSettingsPath)) {
+    fs.mkdirSync(claudeDir, { recursive: true })
+    fs.writeFileSync(
+      claudeSettingsPath,
+      JSON.stringify({ enabledMcpjsonServers: ["oversight"] }, null, 2),
+      "utf-8"
+    )
+    wroteSettings = true
+  } else {
+    try {
+      const existing = JSON.parse(fs.readFileSync(claudeSettingsPath, "utf-8"))
+      const servers: string[] = existing.enabledMcpjsonServers || []
+      if (!servers.includes("oversight")) {
+        existing.enabledMcpjsonServers = [...servers, "oversight"]
+        fs.writeFileSync(claudeSettingsPath, JSON.stringify(existing, null, 2), "utf-8")
+        wroteSettings = true
+      }
+    } catch {
+      /* ignore malformed settings.json */
+    }
+  }
+
+  // 3. CLAUDE.md — inject Oversight usage instructions if not already present
+  const claudeMdPath = path.join(cwd, "CLAUDE.md")
+  if (fs.existsSync(claudeMdPath)) {
+    const content = fs.readFileSync(claudeMdPath, "utf-8")
+    if (!content.includes("oversight_check_change")) {
+      fs.appendFileSync(claudeMdPath, CLAUDE_MD_SECTION, "utf-8")
+      wroteSettings = true // reuse flag to trigger log
+    }
+  }
+
+  if (wroteMcp || wroteSettings) {
+    logger.info(
+      "Created .mcp.json and .claude/settings.json — restart Claude Code (claude-code) to load MCP."
+    )
   }
 }
 
@@ -166,6 +252,7 @@ export function registerInit(program: Command): void {
       )
 
       ensureCursorIntegration(cwd)
+      ensureClaudeCodeIntegration(cwd)
 
       logger.success("Oversight initialized successfully!")
       console.log("")

@@ -34,6 +34,21 @@ function getGitAuthor() {
   }
 }
 
+const CLAUDE_MD_SECTION = `
+## Oversight — Decision Memory
+
+This project uses [Oversight](https://github.com/anthropics/oversight) to record and enforce architectural decisions.
+
+Before editing files involved in architecture or security, use the Oversight MCP tools:
+
+1. **Before significant changes**: Call \`oversight_check_change\` with the change description and affected paths.
+2. **When making architectural decisions**: Call \`oversight_record\` to store the decision with constraints and anchors.
+3. **Before editing a file**: Call \`oversight_get_by_path\` to surface anchored decisions.
+4. **When unsure**: Call \`oversight_search\` to find relevant past decisions.
+
+Respect MUST constraints. If \`oversight_check_change\` returns high risk, revise the change or get explicit approval.
+`
+
 const RULE_CONTENT = `---
 description: Use Oversight to record and enforce architectural decisions
 globs: 
@@ -92,6 +107,76 @@ function ensureCursorIntegration(projectRoot) {
   return false
 }
 
+function ensureClaudeCodeIntegration(projectRoot) {
+  const oversightServer = {
+    command: "npx",
+    args: ["-y", "oversight-mcp"],
+    cwd: projectRoot,
+  }
+
+  // 1. .mcp.json — Claude Code reads MCP servers from this file at the project root
+  const mcpJsonPath = path.join(projectRoot, ".mcp.json")
+  let wroteMcp = false
+  if (!fs.existsSync(mcpJsonPath)) {
+    fs.writeFileSync(
+      mcpJsonPath,
+      JSON.stringify({ mcpServers: { oversight: oversightServer } }, null, 2),
+      "utf-8"
+    )
+    wroteMcp = true
+  } else {
+    try {
+      const existing = JSON.parse(fs.readFileSync(mcpJsonPath, "utf-8"))
+      if (!existing.mcpServers?.oversight) {
+        existing.mcpServers = existing.mcpServers || {}
+        existing.mcpServers.oversight = oversightServer
+        fs.writeFileSync(mcpJsonPath, JSON.stringify(existing, null, 2), "utf-8")
+        wroteMcp = true
+      }
+    } catch (err) {
+      if (process.env.DEBUG_OVERSIGHT_POSTINSTALL) console.error("Oversight postinstall .mcp.json:", err)
+    }
+  }
+
+  // 2. .claude/settings.json — enable the oversight MCP server for this project
+  const claudeDir = path.join(projectRoot, ".claude")
+  const claudeSettingsPath = path.join(claudeDir, "settings.json")
+  let wroteSettings = false
+  if (!fs.existsSync(claudeSettingsPath)) {
+    fs.mkdirSync(claudeDir, { recursive: true })
+    fs.writeFileSync(
+      claudeSettingsPath,
+      JSON.stringify({ enabledMcpjsonServers: ["oversight"] }, null, 2),
+      "utf-8"
+    )
+    wroteSettings = true
+  } else {
+    try {
+      const existing = JSON.parse(fs.readFileSync(claudeSettingsPath, "utf-8"))
+      const servers = existing.enabledMcpjsonServers || []
+      if (!servers.includes("oversight")) {
+        existing.enabledMcpjsonServers = [...servers, "oversight"]
+        fs.writeFileSync(claudeSettingsPath, JSON.stringify(existing, null, 2), "utf-8")
+        wroteSettings = true
+      }
+    } catch (err) {
+      if (process.env.DEBUG_OVERSIGHT_POSTINSTALL) console.error("Oversight postinstall settings.json:", err)
+    }
+  }
+
+  // 3. CLAUDE.md — append Oversight usage instructions if not already present
+  const claudeMdPath = path.join(projectRoot, "CLAUDE.md")
+  if (fs.existsSync(claudeMdPath)) {
+    const content = fs.readFileSync(claudeMdPath, "utf-8")
+    if (!content.includes("oversight_check_change")) {
+      fs.appendFileSync(claudeMdPath, CLAUDE_MD_SECTION, "utf-8")
+      wroteSettings = true
+    }
+  }
+
+  return wroteMcp || wroteSettings
+}
+
 async function run() {
   if (process.env.npm_config_global === "true") return
 
@@ -129,9 +214,10 @@ async function run() {
   }
 
   const wroteCursor = ensureCursorIntegration(projectRoot)
+  const wroteClaudeCode = ensureClaudeCodeIntegration(projectRoot)
 
-  if (didInit || wroteCursor) {
-    console.log("Oversight: initialized .oversight/ and Cursor integration.")
+  if (didInit || wroteCursor || wroteClaudeCode) {
+    console.log("Oversight: initialized .oversight/, Cursor, and Claude Code integration.")
     console.log("Dashboard: http://localhost:7654 — run `oversight dashboard` to start.")
   }
 }
